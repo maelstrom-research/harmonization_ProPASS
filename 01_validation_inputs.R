@@ -1,9 +1,11 @@
+#---- Load packages and inputs ----
+#v1.4
 library(fabR)
 library(madshapR)
 library(dplyr)
 
 # Get input
-checks <- readRDS("archive/checks.rds")
+checks <- readRDS("output_documents/checks.rds")
 DPE <- read_excel_allsheets(sort(list.files("archive/", 
                                             pattern = "data_processing_element", 
                                             full.names = TRUE), 
@@ -14,7 +16,8 @@ dataschema <- read_excel_allsheets("input_documents/dataschema_ProPASS.xlsx")
 DPE <- DPE %>% 
   filter(input_study == checks$harmo_group)
 
-write_excel_allsheets(DPE, paste0("data_processing_element-", checks$harmo_group, ".xlsx"))
+#Save
+write_excel_allsheets(DPE, paste0("data_processing_element-", checks$harmo_group, "-to_Validate.xlsx"))
 
 checks$all_vars_in_DPE <- nrow(DPE) == nrow(dataschema$Variables)
 
@@ -49,7 +52,10 @@ if(any(grepl("\\.sav$|\\.dta$",input_dataset$file))){
   library(haven) # if dataset is in .sav or .dta
 }
 
-checks$packages <- as.data.frame(installed.packages())
+checks$packages <- installed.packages() %>% 
+  as_tibble() %>% 
+  select(Package, Version, Depends, Suggests, Built)
+saveRDS(checks, "output_documents/checks.rds")
 
 
 #---- Prepare reports ----
@@ -87,9 +93,9 @@ for(ii in 1:nrow(input_dataset)){
   
   
   # save the data dictionary in specified folder
-  fabR::write_excel_allsheets(data_dictionnary,paste0("output_reports/","extracted_data_dict_", 
+  fabR::write_excel_allsheets(data_dictionnary,paste0("output_documents/","extracted_data_dict_", 
                                                       input_dataset$name[ii], ".xlsx"))
-  fabR::write_excel_allsheets(data_summary,paste0("output_reports/","data_summary_",
+  fabR::write_excel_allsheets(data_summary,paste0("output_documents/","data_summary_",
                                                   input_dataset$name[ii], ".xlsx"))
   print("-summary reports saved-")
   
@@ -105,9 +111,10 @@ for(ii in 1:nrow(input_dataset)){
   checks$DPE_vars_in_data <- DPE_vars_in_data
 }
 
-check$DPE_vars_all_in <- mean(apply(DPE_vars_in_data[c(input_dataset$name)], 1, function(x){any(x)})) == 1 
+checks$DPE_vars_all_in <- mean(apply(DPE_vars_in_data[c(input_dataset$name)], 1, function(x){any(x)})) == 1 
 
 
 #---- Clean and save ----
-saveRDS(checks, "archive/checks.rds")
-rm(list = c("data_dictionnary", "data_summary", "ii", "DPE_vars_in_data", "data_clean", "DPE_variables"))
+saveRDS(checks, "output_documents/checks.rds")
+saveRDS(checks, paste0("/archive/checks", Sys.Date(), ".rds"))
+rm(list = c("data_dictionnary", "data_summary", "ii", "DPE_vars_in_data", "data_clean", "DPE_variables", "data", "input_dataset"))
