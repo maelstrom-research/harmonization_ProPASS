@@ -116,5 +116,5 @@ checks$DPE_vars_all_in <- mean(apply(DPE_vars_in_data[c(input_dataset$name)], 1,
 
 #---- Clean and save ----
 saveRDS(checks, "output_documents/checks.rds")
-saveRDS(checks, paste0("/archive/checks", Sys.Date(), ".rds"))
+saveRDS(checks, paste0("archive/checks", Sys.Date(), ".rds"))
 rm(list = c("data_dictionnary", "data_summary", "ii", "DPE_vars_in_data", "data_clean", "DPE_variables", "data", "input_dataset"))
