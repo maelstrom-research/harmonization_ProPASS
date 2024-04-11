@@ -14,7 +14,7 @@ dataschema <- read_excel_allsheets("input_documents/dataschema_ProPASS.xlsx")
 
 #---- Prepare Data Processing Element ----
 DPE <- DPE %>% 
-  filter(input_study == checks$harmo_group)
+  filter(input_dataset == checks$harmo_group)
 
 #Save
 write_excel_allsheets(DPE, paste0("data_processing_element-", checks$harmo_group, "-to_Validate.xlsx"))
