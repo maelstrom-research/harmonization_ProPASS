@@ -1,5 +1,5 @@
 #---- Load packages and inputs ----
-#v1.7
+#v1.9
 library(fabR)
 library(madshapR)
 library(dplyr)
@@ -31,12 +31,13 @@ remotes:::download(path = paste0("archive/", temp_name),
                                 ".xlsx"))
 temp <- read_excel_allsheets(paste0("archive/", temp_name))
 
-# 
-if(identical(temp, DPE)){ #remove temp if the same
+# Compare current github version and latest download 
+if(identical(temp$other_format[temp$dataschema_variable=="adm_id"],
+             DPE$other_format[DPE$dataschema_variable=="adm_id"])){ #remove temp if the same
   rm(temp)
   file.remove(paste0("archive/", temp_name))
   rm(temp_name)
-}else{
+}else{ #update DPE to version current github (temp)
   if(gsub("temp-", "", temp_name) == gsub("archive/", "", DPE_list[1]) ){
     file.rename(from = paste0("archive/", temp_name),
                 to = gsub(".xlsx", "x.xlsx", DPE_list[1]))
@@ -45,19 +46,47 @@ if(identical(temp, DPE)){ #remove temp if the same
                 to = gsub("temp-", "", paste0("archive/", temp_name))
                 )
   }
-  rm(list = c("temp", "temp_name"))
+  # Reload
   DPE_list <- sort(list.files("archive/", 
                               pattern = "data_processing_element", 
                               full.names = TRUE), 
                    decreasing = TRUE)
   DPE <- read_excel_allsheets(DPE_list[1])
   checks$download_dpe <- c(checks$download_dpe, Sys.time())
+  
+  # Archive and refresh DPE in input_documents
+  archive_name <- paste0("archive/", list.files("input_documents/", pattern = "-to_Validate.xlsx"))
+  archive_name <- gsub(".xlsx", paste0("-archived_", format(Sys.time(), "%Y-%m-%d"), ".xlsx"), archive_name)
+  ii <- 1
+  while(archive_name %in% list.files("archive/", full.names = TRUE)){
+    archive_name <- gsub(".xlsx", "i.xlsx", archive_name)
+    ii <- ii+1
+    if(ii > 12){
+      stop("There is an issue with the archiving of your files, please contact Maelstrom")
+    }
+  }
+  file.copy(from = list.files("input_documents/", 
+                              pattern = "-to_Validate.xlsx",
+                              full.names = TRUE),
+            to = archive_name)
+  if(!file.info(archive_name)[["size"]] > 0){
+    stop("Make sure you have close your Excel files.
+         If you see this message again, please contact Maelstrom")
+    }
+  
   file.copy(from = DPE_list[1], 
             to = list.files("input_documents/", 
                             pattern = "-to_Validate.xlsx",
                             full.names = TRUE),
             overwrite = TRUE)
-  
+  if(!file.info(list.files("input_documents/", 
+                           pattern = "-to_Validate.xlsx",
+                           full.names = TRUE))[["size"]] > 0){
+    stop("Make sure you have close your Excel files.
+         If you see this message again, please contact Maelstrom")
+  }
+  #  Clean
+  rm(list = c("ii", "archive_name", "temp", "temp_name"))
 }
 
 
