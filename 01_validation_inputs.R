@@ -1,23 +1,67 @@
 #---- Load packages and inputs ----
-#v1.4
+#v1.7
 library(fabR)
 library(madshapR)
 library(dplyr)
 
 # Get input
 checks <- readRDS("output_documents/checks.rds")
-DPE <- read_excel_allsheets(sort(list.files("archive/", 
-                                            pattern = "data_processing_element", 
-                                            full.names = TRUE), 
-                                 decreasing = TRUE)[1])
+
+DPE_list <- sort(list.files("archive/", 
+                            pattern = "data_processing_element", 
+                            full.names = TRUE), 
+                 decreasing = TRUE)
+
 dataschema <- read_excel_allsheets("input_documents/dataschema_ProPASS.xlsx")
 
-#---- Prepare Data Processing Element ----
-DPE <- DPE %>% 
-  filter(input_dataset == checks$harmo_group)
+#---- Confirm version Data Processing Element ----
 
-#Save
-write_excel_allsheets(DPE, paste0("data_processing_element-", checks$harmo_group, "-to_Validate.xlsx"))
+# get latest DPE downloaded
+DPE <- read_excel_allsheets(DPE_list[1])
+
+# download latest github version as temp
+temp_name <- paste0("temp-data_processing_element-",
+               checks$harmo_group, "-",
+               format(Sys.time(), "%Y-%m-%d"), 
+               ".xlsx")
+
+remotes:::download(path = paste0("archive/", temp_name), 
+                   url = paste0("https://github.com/maelstrom-research/harmonization_ProPASS/raw/master/data_processing_elements-",
+                                checks$harmo_group,
+                                ".xlsx"))
+temp <- read_excel_allsheets(paste0("archive/", temp_name))
+
+# 
+if(identical(temp, DPE)){ #remove temp if the same
+  rm(temp)
+  file.remove(paste0("archive/", temp_name))
+  rm(temp_name)
+}else{
+  if(gsub("temp-", "", temp_name) == gsub("archive/", "", DPE_list[1]) ){
+    file.rename(from = paste0("archive/", temp_name),
+                to = gsub(".xlsx", "x.xlsx", DPE_list[1]))
+  }else{
+    file.rename(from = paste0("archive/", temp_name),
+                to = gsub("temp-", "", paste0("archive/", temp_name))
+                )
+  }
+  rm(list = c("temp", "temp_name"))
+  DPE_list <- sort(list.files("archive/", 
+                              pattern = "data_processing_element", 
+                              full.names = TRUE), 
+                   decreasing = TRUE)
+  DPE <- read_excel_allsheets(DPE_list[1])
+  checks$download_dpe <- c(checks$download_dpe, Sys.time())
+  file.copy(from = DPE_list[1], 
+            to = list.files("input_documents/", 
+                            pattern = "-to_Validate.xlsx",
+                            full.names = TRUE),
+            overwrite = TRUE)
+  
+}
+
+
+#--- Check data processing element
 
 checks$all_vars_in_DPE <- nrow(DPE) == nrow(dataschema$Variables)
 
