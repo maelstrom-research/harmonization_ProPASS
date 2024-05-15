@@ -1,6 +1,6 @@
 
 #---- Prepare packages and checks----
-#v1.8 for ProPASS
+#v1.9 for ProPASS
 # install required packages
 if (!"remotes" %in% installed.packages()) {install.packages("remotes")}
 if (!"fabR" %in% installed.packages()) {install.packages("fabR")}
@@ -14,7 +14,7 @@ if(installed.packages() %>% as_tibble() %>% filter(Package == "fabR") %>% pull(V
   install.packages("fabR")
 }
 if(installed.packages() %>% as_tibble() %>% filter(Package == "madshapR") %>% pull(Version) != "1.1.0"){
-  install.packages("fabR")
+  install.packages("madshapR")
 }
 if(installed.packages() %>% as_tibble() %>% filter(Package == "Rmonize") %>% pull(Version) != "1.1.0"){
   install.packages("Rmonize")
