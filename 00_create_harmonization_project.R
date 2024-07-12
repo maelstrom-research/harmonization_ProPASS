@@ -1,31 +1,12 @@
 
 #---- Prepare packages and checks----
-#v1.9 for ProPASS
+# v1.10 for ProPASS
 # install required packages
-if (!"remotes" %in% installed.packages()) {install.packages("remotes")}
-if (!"fabR" %in% installed.packages()) {install.packages("fabR")}
-if (!"madshapR" %in% installed.packages()) {install.packages("madshapR")}
-if (!"Rmonize" %in% installed.packages()) {install.packages("Rmonize")}
-
-library(dplyr)
-
-# Check if packages need update
-if(installed.packages() %>% as_tibble() %>% filter(Package == "fabR") %>% pull(Version) != "2.1.0"){
-  install.packages("fabR")
-}
-if(installed.packages() %>% as_tibble() %>% filter(Package == "madshapR") %>% pull(Version) != "1.1.0"){
-  install.packages("madshapR")
-}
-if(installed.packages() %>% as_tibble() %>% filter(Package == "Rmonize") %>% pull(Version) != "1.1.0"){
-  install.packages("Rmonize")
-}
-
-# Checks 
-checks <- list()
 
 
-#---- Ask what cohort ----
+#---- GLOBAL FUNCTIONS ----
 intro <- function(){
+  
   message(
     "This script was prepared by Maelstrom Research.
     
@@ -36,33 +17,89 @@ intro <- function(){
   
     Please contact us if you have any issues: harmo-propass@maelstrom-research.org")
   
+  choice_list <-
+    c("AGN - Active aging - The AGNES study",
+      "AWH - Australian Longitudinal Study on Women's Health (ALSWH)",
+      "BCS - 1970 British Birth Cohort Study",
+      "CHS - Copenhagen City Heart Study (Denmark)",
+      "DPC - Danish Physical Activity cohort with Objective measurements (DPhacto)",
+      "DSE - Danish Observational Study of Eldercare work and MSK disorders (DOSES) (Denmark)",
+      "ERC - Study on Nutrition and Cardiovascular Risk (Spain)",
+      "FRA - Finish Retirement and Aging Study (FIREA)",
+      "H16 - Health 2016",
+      "LOF - Lolland-Falster Study (LOFUS) (Denmark)",
+      "MSC - The Middle-age Soweto Cohort",
+      "MSN - The Maastricht Study (The Netherlands)",
+      "NES - Nijmegen Exercise Study/ Healthy Brain",
+      "NHS - The Trøndelag Health Study (HUNT 4) (Norway)",
+      "SHR - Survey of health, aging and Retirement in Europe",
+      "SHS - Singapore Population Health Studies (Singapore)")
+  
   harmo_group <- 
-    menu(choices = c("AGN - Active aging - The AGNES study",
-                     "AWH - Australian Longitudinal Study on Women's Health (ALSWH)",
-                     "BCS - 1970 British Birth Cohort Study",
-                     "CHS - Copenhagen City Heart Study (Denmark)",
-                     "DPC - Danish Physical Activity cohort with Objective measurements (DPhacto)",
-                     "DSE - Danish Observational Study of Eldercare work and MSK disorders (DOSES) (Denmark)",
-                     "ERC - Study on Nutrition and Cardiovascular Risk (Spain)",
-                     "FRA - Finish Retirement and Aging Study (FIREA)",
-                     "H16 - Health 2016",
-                     "LOF - Lolland-Falster Study (LOFUS) (Denmark)",
-                     "MSC - The Middle-age Soweto Cohort",
-                     "MSN - The Maastricht Study (The Netherlands)",
-                     "NES - Nijmegen Exercise Study/ Healthy Brain",
-                     "NHS - The Trøndelag Health Study (HUNT 4) (Norway)",
-                     "SHR - Survey of health, aging and Retirement in Europe",
-                     "SHS - Singapore Population Health Studies (Singapore)"),
+    menu(choices = choice_list,
          title = "What cohort do you want to harmonize?")
   
-  harmo_group <- c("AGN", "AWH", "BCS", "CHS", "DPC", "DSE", "ERC", "FRA", "H16", "LOF", "MSC", "MSN", "NES", "NHS", "SHR", "SHS")[harmo_group]
+  harmo_group <- substr(choice_list,1,3)[harmo_group]
   
   message(paste0("We will now create the environment for ", harmo_group,"."))
   
   return(harmo_group)
 }
 
+# function to get the errors of the DPE and help correcting it 
+show_harmo_error_proPASS <- function(checks){
+  
+  temp_dataset <- Rmonize_DEMO$harmonized_dossier
+  
+  errors_warnings <-
+    bind_rows(checks$harmonization_warnings_detail,checks$harmonization_errors_detail) %>%
+    distinct()
+  
+  if(nrow(errors_warnings) > 1){
+    attributes(temp_dataset)$`Rmonize::Data Processing Elements` <-
+      errors_warnings
+    
+    show_harmo_error(temp_dataset)
+  }else{ return("no error")}
+  
+}
+
+# init checks RDS file
+checks <- list()
+
+# checks libraries
+if(!require(tools))    {install.packages("tools")}
+if(!require(fabR))     {install.packages("fabR")}
+if(!require(madshapR)) {install.packages("madshapR")}
+if(!require(Rmonize))  {install.packages("Rmonize")}
+if(!require(dplyr))    {install.packages("dplyr")}
+if(!require(tidyr))    {install.packages("tidyr")}
+if(!require(stringr))  {install.packages("stringr")}
+if(!require(haven))    {install.packages("haven")}
+if(!require(crayon))    {install.packages("crayon")}
+
+# checks if packages need update
+if(packageVersion("fabR")     != "2.1.0"){install.packages("fabR")}
+if(packageVersion("madshapR") != "1.1.0"){install.packages("madshapR")}
+if(packageVersion("Rmonize")  != "1.1.0"){install.packages("Rmonize")}
+
+packages <- 
+  as_tibble(installed.packages()) %>%
+  select(Package, Version, Depends, Suggests, Built)
+
+# catch time_stamp
+time_stamp <- Sys.time()
+
+# Track time
+checks$time_stamp <- time_stamp
+
+#---- checks packages and versions
+checks$R.Version <- R.version.string
+checks$RStudio.Version <- RStudio.Version()$version
+checks$packages <- packages
+
 cat("\014")
+#---- Ask what cohort ----
 harmo_group <- intro()
 
 checks$harmo_group <- harmo_group
@@ -88,45 +125,20 @@ dir.create(paste0(folder_name, "/output_documents"))
 dir.create(paste0(folder_name, "/output_dataset"))
 
 #---- Get files from Github ----
-# Get data processing elements... save in 2 folders
-remotes:::download(path = paste0(folder_name,
-                                 "/archive/data_processing_element-",
-                                 harmo_group, "-",
-                                 format(Sys.time(), "%Y-%m-%d"), 
-                                 ".xlsx"), 
-                   url = paste0("https://github.com/maelstrom-research/harmonization_ProPASS/raw/master/data_processing_elements-",
-                                harmo_group,
-                                ".xlsx")
-)
-remotes:::download(path = paste0(folder_name,
-                                 "/input_documents/data_processing_element-",
-                                 harmo_group,
-                                 "-to_Validate.xlsx"), 
-                   url = paste0("https://github.com/maelstrom-research/harmonization_ProPASS/raw/master/data_processing_elements-",
-                                harmo_group,
-                                ".xlsx")
-)
 
-remotes:::download(path = paste0(folder_name, "/input_documents/dataschema_ProPASS.xlsx"),
-                   url = "https://github.com/maelstrom-research/harmonization_ProPASS/raw/master/dataschema_ProPASS.xlsx")
-remotes:::download(path = paste0(folder_name, "/01_validation_inputs.R"),
-                   url = "https://github.com/maelstrom-research/harmonization_ProPASS/raw/master/01_validation_inputs.R")
+# get processing files
+download.file(
+  url = "https://github.com/maelstrom-research/harmonization_ProPASS/raw/master/01_validation_inputs.R",
+  destfile = paste0(folder_name, "/01_validation_inputs.R"),
+  mode = "wb")
 
+download.file(
+  url = "https://github.com/maelstrom-research/harmonization_ProPASS/raw/master/02_data_transformation.R",
+  destfile = paste0(folder_name, "/02_data_transformation.R"),
+  mode = "wb")
 
-# Track time
-checks$download_dpe <- Sys.time()
-
-#---- Check packages, save and clean ----
-checks$packages <- installed.packages() %>% 
-  as_tibble() %>% 
-  select(Package, Version, Depends, Suggests, Built)
-
-saveRDS(checks, paste0(folder_name, "/output_documents/checks.rds"))
-saveRDS(checks, paste0(folder_name, "/archive/checks", Sys.Date(), ".rds"))
-
-# Clean a little
-rm(list = c("checks", "current_dir", "harmo_group", "intro"))
-
+# Save initial parameters one in archives, one in current output project
+saveRDS(checks, paste0(folder_name, "./output_documents/checks_init", ".rds"))
 
 # The last line will open a new project, and ask you if you want to save (you don't need to)
 rstudioapi::openProject(path = folder_name)
