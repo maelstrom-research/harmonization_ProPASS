@@ -7,6 +7,7 @@ library(madshapR)
 library(Rmonize)
 library(tidyverse)
 library(janitor)
+library(htmltools)
 
 # download before after function
 library(crayon)
@@ -612,7 +613,7 @@ if(!any(checks$harmonization_errors,checks$harmonization_warnings)){
   harmonized_data_dict <- 
     data_dict_extract(pooled_harmonized_dataset)
   harmonized_data_dict_path <- 
-    paste0("output_document/","harmonized_data_dict-",
+    paste0("output_documents/","harmonized_data_dict-",
            checks$harmo_group,'.xlsx')
   write_excel_allsheets(
     harmonized_data_dict,
@@ -620,7 +621,7 @@ if(!any(checks$harmonization_errors,checks$harmonization_warnings)){
   
   # visual report
   viz_path <- 
-    paste0("output_document/","visual_report-",checks$harmo_group)
+    paste0("output_documents/","visual_report-",checks$harmo_group)
   harmonized_dossier_visualize(
     harmonized_dossier = harmonized_dataset,
     bookdown_path = viz_path,
