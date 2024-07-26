@@ -78,6 +78,7 @@ if(!require(stringr))  {install.packages("stringr")}
 if(!require(haven))    {install.packages("haven")}
 if(!require(crayon))    {install.packages("crayon")}
 if(!require(htmltools))    {install.packages("htmltools")}
+if(!require(car))    {install.packages("car")}
 
 # checks if packages need update
 if(packageVersion("fabR")     != "2.1.0"){install.packages("fabR")}
