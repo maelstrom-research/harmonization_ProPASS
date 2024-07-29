@@ -67,10 +67,14 @@ show_harmo_error_proPASS <- function(checks){
 # init checks RDS file
 checks <- list()
 
+#temporary fix, installing testing version of madshapR (with restricted token)
+remove.packages("madshapR")
+
 # checks libraries
+if(!require(devtools))    {install.packages("devtools")}
 if(!require(tools))    {install.packages("tools")}
 if(!require(fabR))     {install.packages("fabR")}
-if(!require(madshapR)) {install.packages("madshapR")}
+if(!require(madshapR)) {install_github("maelstrom-research/madshapR@testing", auth_token = "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")}
 if(!require(Rmonize))  {install.packages("Rmonize")}
 if(!require(dplyr))    {install.packages("dplyr")}
 if(!require(tidyr))    {install.packages("tidyr")}
