@@ -86,7 +86,7 @@ if(!require(car))    {install.packages("car")}
 
 # checks if packages need update
 if(packageVersion("fabR")     != "2.1.0"){install.packages("fabR")}
-if(packageVersion("madshapR") != "1.1.0"){install.packages("madshapR")}
+#if(packageVersion("madshapR") != "1.1.0"){install.packages("madshapR")}
 if(packageVersion("Rmonize")  != "1.1.0"){install.packages("Rmonize")}
 
 packages <- 
