@@ -74,7 +74,7 @@ remove.packages("madshapR")
 if(!require(devtools))    {install.packages("devtools")}
 if(!require(tools))    {install.packages("tools")}
 if(!require(fabR))     {install.packages("fabR")}
-if(!require(madshapR)) {install_github("maelstrom-research/madshapR@testing", auth_token = "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")}
+if(!require(madshapR)) {install_github("maelstrom-research/madshapR@testing", auth_token = "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")}
 if(!require(Rmonize))  {install.packages("Rmonize")}
 if(!require(dplyr))    {install.packages("dplyr")}
 if(!require(tidyr))    {install.packages("tidyr")}
