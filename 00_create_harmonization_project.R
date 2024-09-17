@@ -140,7 +140,7 @@ download.file(
   mode = "wb")
 
 # Save initial parameters one in archives, one in current output project
-saveRDS(checks, paste0(folder_name, "./output_documents/checks_init", ".rds"))
+saveRDS(checks, paste0(folder_name, "/output_documents/checks_init", ".rds"))
 
 # The last line will open a new project, and ask you if you want to save (you don't need to)
 rstudioapi::openProject(path = folder_name)
