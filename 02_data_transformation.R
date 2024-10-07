@@ -620,12 +620,12 @@ if(!any(checks$harmonization_errors,checks$harmonization_warnings)){
     harmonized_data_dict_path)
   
   # visual report
-  viz_path <- 
-    paste0("output_documents/","visual_report-",checks$harmo_group)
-  harmonized_dossier_visualize(
-    harmonized_dossier = harmonized_dataset,
-    bookdown_path = viz_path,
-    harmonized_dossier_summary = output_summary)
+#  viz_path <- 
+#    paste0("output_documents/","visual_report-",checks$harmo_group)
+#  harmonized_dossier_visualize(
+#    harmonized_dossier = harmonized_dataset,
+#    bookdown_path = viz_path,
+#    harmonized_dossier_summary = output_summary)
   
 }else{
   
