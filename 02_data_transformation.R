@@ -576,7 +576,7 @@ send the file '",basename(checks_path),"' from the folder 'output_documents'.")
 
 #---- before/after ----
 
-if(!any(checks$harmonization_errors,checks$harmonization_warnings)){
+if(!any(checks$harmonization_errors)){
   
   # before after report
   before_after_report <- 
