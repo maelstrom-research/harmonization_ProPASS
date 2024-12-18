@@ -1,6 +1,6 @@
 
 #---- Prepare packages and checks----
-# v1.10 for ProPASS
+# v1.12 for ProPASS
 # install required packages
 
 
@@ -21,12 +21,15 @@ intro <- function(){
     c("AGN - Active aging - The AGNES study",
       "AWH - Australian Longitudinal Study on Women's Health (ALSWH)",
       "BCS - 1970 British Birth Cohort Study",
+      "CHK - Chinese University of Hong Kong",
       "CHS - Copenhagen City Heart Study (Denmark)",
+      "DNH - Danish National Health Survey",
       "DPC - Danish Physical Activity cohort with Objective measurements (DPhacto)",
       "DSE - Danish Observational Study of Eldercare work and MSK disorders (DOSES) (Denmark)",
       "ERC - Study on Nutrition and Cardiovascular Risk (Spain)",
       "FRA - Finish Retirement and Aging Study (FIREA)",
       "H16 - Health 2016",
+      "HBS - Healthy Brain Study",
       "LOF - Lolland-Falster Study (LOFUS) (Denmark)",
       "MSC - The Middle-age Soweto Cohort",
       "MSN - The Maastricht Study (The Netherlands)",
@@ -46,23 +49,6 @@ intro <- function(){
   return(harmo_group)
 }
 
-# function to get the errors of the DPE and help correcting it 
-show_harmo_error_proPASS <- function(checks){
-  
-  temp_dataset <- Rmonize_DEMO$harmonized_dossier
-  
-  errors_warnings <-
-    bind_rows(checks$harmonization_warnings_detail,checks$harmonization_errors_detail) %>%
-    distinct()
-  
-  if(nrow(errors_warnings) > 1){
-    attributes(temp_dataset)$`Rmonize::Data Processing Elements` <-
-      errors_warnings
-    
-    show_harmo_error(temp_dataset)
-  }else{ return("no error")}
-  
-}
 
 # init checks RDS file
 checks <- list()
