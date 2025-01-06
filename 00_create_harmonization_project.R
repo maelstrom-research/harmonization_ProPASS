@@ -30,6 +30,7 @@ intro <- function(){
       "FRA - Finish Retirement and Aging Study (FIREA)",
       "H16 - Health 2016",
       "HBS - Healthy Brain Study",
+      "KSA - King Faisal University Saudi Arabia",
       "LOF - Lolland-Falster Study (LOFUS) (Denmark)",
       "MSC - The Middle-age Soweto Cohort",
       "MSN - The Maastricht Study (The Netherlands)",
