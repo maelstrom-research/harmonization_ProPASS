@@ -1,5 +1,5 @@
 #---- Load packages ----
-# v2.00
+# v2.01
 library(fabR)
 library(madshapR)
 library(Rmonize)
@@ -28,7 +28,13 @@ if(length(checks_list) > 1){
 if(length(checks_list) == 1){
   checks <- readRDS(checks_list)
   file.copy(from = checks_list,
-            to = gsub("output_documents/","archive/", checks_list))
+            to = gsub("output_documents/",
+                      "archive/", 
+                      gsub(".rds",
+                           paste0(format(time_stamp,"_%Y%m%d%H%M%S"), ".rds"),
+                           checks_list)
+                      )
+            )
   #@$ REMOVE?
 }
 if(length(checks_list) == 0){
@@ -304,14 +310,15 @@ for(ii in 1:nrow(input_datasets)){
   
 }
 
-checks$DPE_vars_all_in <- !unlist(lapply(DPE_vars_in_data[c(input_datasets$name)], any))
+checks$DPE_vars_all_in <- !unlist(lapply(DPE_vars_in_data[c(input_datasets$dpe_dataset)], any))
 
 #---- Final check ----
 # Change in packages since last run
 packages <- as_tibble(installed.packages()) %>%
   select(Package, Version, Depends, Suggests, Built)
 
-checks$packages_changed <- !identical(packages, checks$packages)
+checks$packages <- packages
+checks$changed_packages <- !identical(packages, checks$packages)
 rm(packages)
 
 

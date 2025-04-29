@@ -1,5 +1,5 @@
 #---- Load packages and inputs ----
-# v2.00
+# v2.01
 
 library(tools)
 library(fabR)
@@ -9,10 +9,9 @@ library(Rmonize)
 library(janitor) #remove_empty
 library(rlang) #set_names
 library(htmltools)
-
-# download before after function
 library(crayon)
 
+# download before after function
 avant_apres_harmo <- function(
     dossier = NULL, 
     harmonized_dossier = NULL, 

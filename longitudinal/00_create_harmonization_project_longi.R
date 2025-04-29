@@ -1,6 +1,6 @@
 
 #---- Prepare packages ----
-# v2.00 for ProPASS
+# v2.01 for ProPASS
 # install required packages
 # # checks libraries
 
@@ -8,6 +8,7 @@ if(!require(fabR))     {install.packages("fabR")}
 if(!require(madshapR))     {install.packages("madshapR")}
 if(!require(Rmonize))  {install.packages("Rmonize")}
 
+if(!require(dplyr))  {install.packages("dplyr")}
 if(!require(htmltools))    {install.packages("htmltools")}
 if(!require(car))    {install.packages("car")}
 
@@ -108,11 +109,11 @@ dir.create(paste0(folder_name, "/output_dataset"))
 #@CHANGE links when github
 # get processing files
 download.file(
-  url = "https://github.com/maelstrom-research/harmonization_ProPASS/raw/refs/heads/master/longitudinal/01_validation_inputs_longi",
+  url = "https://github.com/maelstrom-research/harmonization_ProPASS/raw/refs/heads/master/longitudinal/01_validation_inputs_longi.R",
   destfile = paste0(folder_name, "/01_validation_inputs_longi.R"),
   mode = "wb")
 download.file(
-  url = "https://github.com/maelstrom-research/harmonization_ProPASS/raw/refs/heads/master/longitudinal/02_data_transformation_longi",
+  url = "https://github.com/maelstrom-research/harmonization_ProPASS/raw/refs/heads/master/longitudinal/02_data_transformation_longi.R",
   destfile = paste0(folder_name, "/02_data_transformation_longi.R"),
   mode = "wb")
 
