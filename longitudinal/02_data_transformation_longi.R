@@ -1,5 +1,5 @@
 #---- Load packages and inputs ----
-# v2.01
+# v2.02
 
 library(tools)
 library(fabR)
@@ -552,7 +552,7 @@ send the file '",paste0("output_documents/checks-", checks$harmo_group, ".rds"),
 
 
 
-#---- before/after ----
+#---- Prepare and Save outputs ----
 
 if(!any(checks$harmonization_errors)){
   
@@ -593,6 +593,11 @@ if(!any(checks$harmonization_errors)){
     harmonized_data_dict,
     paste0("output_documents/","harmonized_data_dict_longitudinal-",
            checks$harmo_group,'.xlsx'))
+    
+  # save harmonized dossier
+  saveRDS(harmonized_dossier, 
+          paste0("output_dataset/harmonized_dossier_longitudinal-", checks$harmo_group, ".rds"))
+    
   
 }else{
   
