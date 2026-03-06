@@ -1,5 +1,5 @@
-#---- Load packages and inputs ----
-# v1.10
+#---- Load packages and basic inputs ----
+# v2.0
 
 library(tools)
 library(fabR)
@@ -31,32 +31,12 @@ get_input_var_names <- function(data_proc_elem){
 }
 
 # email contact if problems
-email_contact <- "info@maelstrom-research.org"
+email_contact <- "sbtiali@maelstrom-research.org"
 
 # get time track
 time_stamp <- Sys.time()
 
-# monitor checks
-checks <- readRDS("output_documents/checks_init.rds")
-checks_list <-
-  list.files("output_documents/", pattern = paste0("checks-",checks$harmo_group),full.names = TRUE)
-
-if(length(checks_list) > 0){
-  invisible(file.rename(
-    from = checks_list,
-    to = str_replace_all(checks_list,"output_documents/","archive/")))}
-
-checks_path <- 
-  paste0("output_documents/checks-",checks$harmo_group,"-",format(time_stamp,"%Y-%m-%H%M%S"), ".rds")
-
-invisible(file.copy(from = "output_documents/checks_init.rds",to = checks_path))
-
-checks <- readRDS(checks_path)
-
-# replace time_stamp
-checks$time_stamp <- time_stamp
-
-# check if any document is open is open
+#---- check if any document is open is open
 open_file <-
   any(str_detect(
     list.files("input_documents/"), "~\\$"),
@@ -73,144 +53,202 @@ Make sure you have close your Excel files.
 If you see this message again, please contact Maelstrom Research at ",email_contact)
 }
 
-# get the dataschema
+#---- Monitor checks ----
+checks <- readRDS("output_documents/checks_init.rds")
+checks_list <-
+  list.files("output_documents/", pattern = paste0("checks-",checks$harmo_group),full.names = TRUE)
 
-dataschema_path <- "input_documents/dataschema_ProPASS.xlsx"
+if(length(checks_list) > 0){
+  invisible(file.rename(
+    from = checks_list,
+    to = str_replace_all(checks_list,"output_documents/","archive/")))}
 
-if(!file.exists(dataschema_path)){
-  download.file(
-    url = "https://github.com/maelstrom-research/harmonization_ProPASS/raw/master/dataschema_ProPASS.xlsx",
-    destfile = "input_documents/dataschema_ProPASS.xlsx",
-    mode = "wb")
-  
-}else{
-  
-  # checks if dataschema local and on github are different
-  download.file(
-    url = "https://github.com/maelstrom-research/harmonization_ProPASS/raw/master/dataschema_ProPASS.xlsx",
-    destfile = "input_documents/dataschema_ProPASS_github.xlsx",
-    mode = "wb")
-  
+checks_path <- 
+  paste0("output_documents/checks-",checks$harmo_group,"-",format(time_stamp,"%Y-%m-%H%M%S"), ".rds")
+
+invisible(file.copy(from = "output_documents/checks_init.rds",to = checks_path))
+
+# replace time_stamp
+checks$time_stamp <- time_stamp
+rm(list = c("time_stamp", "checks_list"))
+
+
+
+#---- Get the dataschema ----
+download.file(
+  url = "https://github.com/maelstrom-research/harmonization_ProPASS/raw/master/baseline/dataschema_ProPASS.xlsx",
+  destfile = "input_documents/dataschema_ProPASS_github.xlsx",
+  mode = "wb")
+
+dataschema_github <- read_excel_allsheets("input_documents/dataschema_ProPASS_github.xlsx")
+
+# Compare dataschema versions
+if(file.exists("input_documents/dataschema_ProPASS.xlsx")){
   dataschema_local <- read_excel_allsheets("input_documents/dataschema_ProPASS.xlsx")
-  dataschema_github <- read_excel_allsheets("input_documents/dataschema_ProPASS_github.xlsx")
   
-  invisible(file.remove("input_documents/dataschema_ProPASS_github.xlsx"))
   
   test_all_equal <- try(all(dataschema_local$Variables  == dataschema_github$Variables,
                             dataschema_local$Categories == dataschema_github$Categories,na.rm = TRUE),silent = TRUE)
   
-  if(class(test_all_equal)[1] == "try-error") test_all_equal <- FALSE
+  if(class(test_all_equal)[1] == "try-error"){stop("An issue occured when validating the dataschema.")}
   
   if(test_all_equal){
-    
-    checks$dataschema_uptodate <- TRUE
-    
+    checks$dataschema_uptodate <- "No change since last run."
+    invisible(file.remove("input_documents/dataschema_ProPASS_github.xlsx"))
   }else{
+    file.rename(from = "input_documents/dataschema_ProPASS.xlsx",
+                to = paste0("archive/dataschema_ProPASS_archived-", format(checks$time_stamp,"%Y-%m-%H%M%S"), ".xlsx"))
+    file.rename(from = "input_documents/dataschema_ProPASS_github.xlsx",
+                to = "input_documents/dataschema_ProPASS.xlsx")
+    message("
     
-    checks$dataschema_uptodate <- FALSE
-    saveRDS(checks, checks_path)
-    stop(call. = FALSE,
-         "
-The dataSchema present in your folder /input_documents is out of date. 
-            
-Please contact Maelstrom Research at ",email_contact," 
-and send the file '",basename(checks_path),"' from the folder 'output_documents'.")
+          ----------------
+          Change detected in dataschema!
+          
+          The local version of the dataschema is archived and,
+          replaced by the new dataschema from Github.
+          ----------------
+          
+          ")
+    checks$dataschema_uptodate <- "Dataschema updated!"
+  }
+}
+
+# If the first using the script
+if(!file.exists("input_documents/dataschema_ProPASS.xlsx")){
+  file.rename(from = "input_documents/dataschema_ProPASS_github.xlsx",
+              to = "input_documents/dataschema_ProPASS.xlsx")
+  
+  checks$dataschema_uptodate <- "First download of the dataschema"
+}
+
+# Keep only most recent dataschema
+dataschema <- dataschema_github
+rm(list = c("dataschema_local","dataschema_github","test_all_equal"))
+
+
+
+#---- Get the data processing element ----
+
+dpe_list <- file.info(list.files("input_documents",
+                                 pattern = "data_processing_element",
+                                 full.names = TRUE
+                                 )
+                      ) %>%
+  mutate(name = rownames(.)) %>% 
+  as_tibble %>% 
+  select(name, mtime, ctime) %>%
+  arrange(desc(ctime))
+
+# Get from Github
+download.file(
+  url = paste0(
+    "https://github.com/maelstrom-research/harmonization_ProPASS/raw/master/baseline/data_processing_elements-",
+    checks$harmo_group,".xlsx"), 
+  destfile = paste0("input_documents/data_processing_element-",
+                    checks$harmo_group, 
+                    "-github.xlsx"),
+  mode = "wb")
+dpe_github <- read_excel_allsheets(paste0("input_documents/data_processing_element-",
+                                          checks$harmo_group, 
+                                          "-github.xlsx"))
+
+# When too many DPE
+if(nrow(dpe_list) > 2){stop("Why do you have many data processing elements?")}
+
+if(nrow(dpe_list) == 2){ #Could happen if previously used older version of this script
+  file.rename(
+    from = dpe_list$name[2],
+    to = gsub("input_documents/", "archive/",
+              gsub(".xlsx", paste0(format(checks$time_stamp,"_%Y%m%d%H%M%S"),".xlsx"), 
+                   dpe_list$name[2]) )
+  )
+  dpe_list <- dpe_list[1,]
+}
+
+
+# If older DPE present
+if(nrow(dpe_list) == 1){
+  dpe_local <- read_excel_allsheets(dpe_list$name)
+  
+  if(identical(dpe_local, dpe_github)){
+    file.remove(paste0("input_documents/data_processing_element-",
+                       checks$harmo_group, 
+                       "-github.xlsx"))
+  }else{
+    file.rename(
+      from = dpe_list$name,
+      to = gsub("input_documents/", "archive/",
+                gsub(".xlsx", paste0(format(checks$time_stamp,"_%Y%m%d%H%M%S"),".xlsx"), 
+                     dpe_list$name) )
+    )
+    file.rename(
+      from = paste0("input_documents/data_processing_element-",
+                    checks$harmo_group, 
+                    "-github.xlsx"),
+      to = paste0("input_documents/data_processing_element-",
+                  checks$harmo_group, 
+                  "-", format(checks$time_stamp, "%Y-%m-%d"), ".xlsx")
+    ) 
+    #----------
+    #@Optional: 
+    #@Run harmo if harmo rules changed since last version
+    #----------
+    if(checks$dataschema_uptodate != "Dataschema updated!"){
+      specific <- menu(choices = c("All [default]", "Only variables changed in DPE"), 
+                       title = "
+                       What variables do you want to harmonize?")
+      if(specific == 2){
+        checks$harmo_type <- "subset"
+        var_changed <- c(setdiff(dpe_local %>% select(dataschema_variable, contains("mlstr")),
+                               dpe_github %>% select(dataschema_variable, contains("mlstr"))
+                               ) %>% 
+          pull(dataschema_variable),
+          setdiff(dpe_github %>% select(dataschema_variable, contains("mlstr")),
+                  dpe_local %>% select(dataschema_variable, contains("mlstr"))
+          ) %>% 
+            pull(dataschema_variable)
+        ) %>% unique
+        
+        dpe_github <- dpe_github %>% 
+          filter((trimws(`Mlstr_harmo::rule_category`) == "id_creation") |
+                   dataschema_variable %in% var_changed)
+        write_excel_allsheets(dpe_github,
+                              paste0("input_documents/data_processing_element-",
+                                     checks$harmo_group, 
+                                     "-", format(checks$time_stamp, "%Y-%m-%d"), ".xlsx")
+        )
+        rm(var_changed)
+      }else{
+        checks$harmo_type <- "all"
+      }
+      rm(specific)
+    }
     
   }
-  
-  rm(list = c("dataschema_local","dataschema_github","test_all_equal"))
+  rm(dpe_local)
 }
 
-dpe_path <- 
-  paste0(
-    "input_documents/data_processing_element-",
-    checks$harmo_group, "-",format(time_stamp, "%Y-%m-%d"),".xlsx")
 
-DPE_list <- sort(
-  list.files("input_documents/", 
-             pattern = "data_processing_element", 
-             full.names = TRUE), 
-  decreasing = TRUE)
-
-# put old dpe in archives
-if(length(DPE_list) > 1){
-  
-  archived_dpe_path <-
-    str_replace(
-      DPE_list[-1],pattern = ".xlsx", 
-      paste0(format(Sys.time(),"_%Y%m%d%H%M%S"),".xlsx")) %>%
-    str_replace("input_documents/","archive/")
-  
-  invisible(file.rename(
-    from = DPE_list[-1],
-    to = archived_dpe_path))
+# If first time running script
+if(nrow(dpe_list) == 0){
+  file.rename(
+    from = paste0("input_documents/data_processing_element-",
+                  checks$harmo_group, 
+                  "-github.xlsx"),
+    to = paste0("input_documents/data_processing_element-",
+                checks$harmo_group, 
+                "-", format(checks$time_stamp, "%Y-%m-%d"), ".xlsx")
+  )
+  checks$harmo_type <- "all"
 }
 
-# if no dpe
-if(length(DPE_list) == 0){
-  # get the data_proc_elem
-  download.file(
-    url = paste0(
-      "https://github.com/maelstrom-research/harmonization_ProPASS/raw/master/data_processing_elements-",
-      checks$harmo_group,".xlsx"), 
-    destfile = dpe_path,
-    mode = "wb")
-  
-}else{ # if one dpe
-  
-  # checks if data_proc_elem local and on github are different
-  download.file(
-    url = paste0(
-      "https://github.com/maelstrom-research/harmonization_ProPASS/raw/master/data_processing_elements-",
-      checks$harmo_group,".xlsx"), 
-    destfile = "input_documents/data_proc_elem-github.xlsx",
-    mode = "wb")
-  
-  dpe_local <- read_excel_allsheets(DPE_list[1])
-  dpe_github <- read_excel_allsheets("input_documents/data_proc_elem-github.xlsx")
-  
-  if(all(dpe_local  == dpe_github,na.rm = TRUE)){
-    
-    checks$dpe_uptodate <- TRUE
-    
-  }else{
-    
-    checks$dpe_uptodate <- FALSE
-    saveRDS(checks, checks_path)
-    message(
-      "
-The Data Processing Elements (DPE) present in your folder /input_documents is 
-out of date, or differs from the DPE present online in the github folder.
+# Keep only relevent DPE
+DPE <- dpe_github
+rm(list = c("dpe_github", "dpe_list"))
 
-If you are not able to go further in the process, please contact 
-Maelstrom Research at ",email_contact," and 
-send the file '",basename(checks_path),"' from the folder 'output_documents'.")
-    
-  }
-  
-  archived_dpe_path <-
-    str_replace(
-      DPE_list[1],pattern = ".xlsx", 
-      paste0(format(Sys.time(),"_%Y%m%d%H%M%S"),".xlsx")) %>%
-    str_replace("input_documents/","archive/")
-  
-  invisible(file.rename(
-    from = DPE_list[1],
-    to = archived_dpe_path))
-  
-  invisible(file.rename(
-    from = "input_documents/data_proc_elem-github.xlsx",
-    to = dpe_path))
-  
-  rm(list = c("dpe_local","dpe_github","archived_dpe_path"))
-  
-}
 
-#---- read dataschema and dpe ----
-dataschema <- read_excel_allsheets(dataschema_path)
-DPE <- read_excel_allsheets(dpe_path)
-
-#---- checks inputs ----
+#---- Checks inputs ----
 
 checks$input_documents_ok <- c(is_dataschema(dataschema), is_data_proc_elem(DPE))
 
@@ -229,24 +267,29 @@ and send the file '",basename(checks_path),"' from the folder 'output_documents'
 }
 
 #--- checks data processing element
-checks$all_vars_in_DPE <- nrow(DPE) == nrow(dataschema$Variables)
+checks$all_vars_in_DPE <- (nrow(DPE) == nrow(dataschema$Variables)) &
+  all(DPE$dataschema_variable %in% dataschema$Variables$name)
 
 # Get the variables needed for harmonization
 DPE_variables <- get_input_var_names(DPE)
 
-#---- checks input datasets ----
-# Get input datasets
-input_dataset <- data.frame(
+#---- Get input dataset ----
+
+input_dataset <- tibble(
   name = sub('\\..[^\\.]*$', '', list.files("input_dataset/")),
   file = list.files("input_dataset/"),
   path = list.files("input_dataset/", full.names=TRUE)
 )
 
-input_dataset$error_duplicated <- any(duplicated(c(input_dataset$name)))
 input_dataset$error_format <- !grepl("\\.csv$|\\.xlsx$|\\.rds$|\\.sav$|\\.dta$", input_dataset$file)
-checks$input_dataset <- input_dataset
+checks$input_dataset <- input_dataset 
+
 
 # Error messages
+if(nrow(input_dataset) > 1){stop(call. = FALSE,
+                                 "
+Multiple input dataset files. Please keep only the one required, and remove the other.")}
+
 if(nrow(input_dataset)==0){stop(call. = FALSE,
                                 "
 No input file found in the folder 'input_dataset'. Have you added your file(s)?")}
@@ -255,33 +298,30 @@ if(any(input_dataset == TRUE))stop(call. = FALSE,
 There is an issues/limitation with a file in 'input_dataset'.
 Please contact Maelstrom Research at ",email_contact,"for help.")
 
-#---- Prepare reports ----
+#---- Open file
 
-for(ii in 1:nrow(input_dataset)){
-  message(paste0("Starting #", ii, " : ", input_dataset$file[ii]))
-  message("reading the Excel file. Please wait...")
-  
-  # --------------------------------------------
-  # get data
-  if (file_ext(input_dataset$path[ii]) == "csv") {
-    data <- fabR::read_csv_any_formats(input_dataset$path[ii])
-    # if any format is error, put this line back instead :
-    # data <- read.csv(input_dataset$path[ii], encoding = "latin1") 
-  } else if (file_ext(input_dataset$path[ii]) == "xlsx") {
-    data <- read_excel_allsheets(input_dataset$path[ii])
-  } else if (file_ext(input_dataset$path[ii]) == "rds") {
-    data <- readRDS(input_dataset$path[ii])
-  } else if (file_ext(input_dataset$path[ii]) == "sav") {
-    data <- read_sav(input_dataset$path[ii])
-  } else if (file_ext(input_dataset$path[ii]) == "dta") {
-    data <- read_dta(input_dataset$path[ii])
-  }
-  
-  # create a new data frame without confidential variables
-  data_clean <- data[,which(names(data) %in% DPE_variables)]
-  
-  message("-data loaded and cleaned-")
-  
+# get data
+if (file_ext(input_dataset$path) == "csv") {
+  data <- fabR::read_csv_any_formats(input_dataset$path)
+  # if any format is error, put this line back instead :
+  # data <- read.csv(input_dataset$path, encoding = "latin1") 
+} else if (file_ext(input_dataset$path) == "xlsx") {
+  data <- read_excel_allsheets(input_dataset$path)
+} else if (file_ext(input_dataset$path) == "rds") {
+  data <- readRDS(input_dataset$path)
+} else if (file_ext(input_dataset$path) == "sav") {
+  data <- read_sav(input_dataset$path)
+} else if (file_ext(input_dataset$path) == "dta") {
+  data <- read_dta(input_dataset$path)
+}
+
+# create a new data frame without confidential variables
+data_clean <- data[,which(names(data) %in% DPE_variables)]
+
+message("-data loaded and cleaned-")
+
+
+if(checks$harmo_type == "all"){
   # --------------------------------------------
   # generate maelstrom datadictionary and summary
   
@@ -293,41 +333,39 @@ for(ii in 1:nrow(input_dataset)){
   # save the data dictionary in specified folder
   write_excel_allsheets(
     data_dictionnary,
-    paste0("output_documents/input data dictionaries/","extracted_data_dict_",input_dataset$name[ii], ".xlsx"))
+    paste0("output_documents/input data dictionaries/","extracted_data_dict_",input_dataset$name, ".xlsx"))
   write_excel_allsheets(
     data_summary,
-    paste0("output_documents/input data summaries/","data_summary_",input_dataset$name[ii], ".xlsx"))
-  
-  # store information for later
-  saveRDS(data_clean,paste0("output_documents/data_clean_",input_dataset$name[ii],".rds"))
+    paste0("output_documents/input data summaries/","data_summary_",input_dataset$name, ".xlsx"))
   
   message("-summary reports saved-")
   
-  # --------------------------------------------
-  # checks presence of DPE_variables
-  
-  if("DPE_vars_in_data" %in% names(checks)){
-    DPE_vars_in_data <- checks$DPE_vars_in_data
-  }else{
-    DPE_vars_in_data <- tibble("DPE_variables" = DPE_variables)}
-  
-  DPE_vars_in_data[[input_dataset$name[ii]]] <- DPE_variables %in% names(data_clean)
-  checks$DPE_vars_in_data <- DPE_vars_in_data
-  
 }
 
+
+  
+# --------------------------------------------
+# checks presence of DPE_variables
+
+if("DPE_vars_in_data" %in% names(checks)){
+  DPE_vars_in_data <- checks$DPE_vars_in_data
+}else{
+  DPE_vars_in_data <- tibble("DPE_variables" = DPE_variables)}
+
+DPE_vars_in_data[[input_dataset$name]] <- DPE_variables %in% names(data_clean)
+checks$DPE_vars_in_data <- DPE_vars_in_data 
+  
 checks$DPE_vars_all_in <- !unlist(lapply(DPE_vars_in_data[c(input_dataset$name)], any))
+
 
 #---- Save and clean ----
 
 saveRDS(checks, checks_path)
 saveRDS(dataschema, "output_documents/dataschema.rds")
 saveRDS(DPE, "output_documents/DPE.rds")
-saveRDS(email_contact, "output_documents/email_contact.rds")
-saveRDS(checks_path, "output_documents/checks_path.rds")
+# saveRDS(checks_path, "output_documents/checks_path.rds")
 
-rm(list = c("data_dictionnary", "data_summary", "ii", "DPE_vars_in_data", 
-            "data_clean", "DPE_variables", "data", "input_dataset",
+rm(list = c("data_dictionnary", "data_summary", "DPE_vars_in_data",
+            "DPE_variables", "data", "input_dataset",
             "dataschema_path","checks_list","time_stamp","DPE_list",
-            "checks","dataschema","DPE","get_input_var_names",
-            "checks_path","email_contact","open_file","dpe_path"))
+            "get_input_var_names", "dpe_path"))

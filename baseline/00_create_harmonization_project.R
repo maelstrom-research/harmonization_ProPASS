@@ -1,6 +1,6 @@
 
 #---- Prepare packages and checks----
-# v1.12 for ProPASS
+# v2.0 for ProPASS
 # install required packages
 
 
@@ -37,13 +37,24 @@ intro <- function(){
       "NES - Nijmegen Exercise Study/ Healthy Brain",
       "NHS - The Trøndelag Health Study (HUNT 4) (Norway)",
       "SHR - Survey of health, aging and Retirement in Europe",
-      "SHS - Singapore Population Health Studies (Singapore)")
+      "SHS - Singapore Population Health Studies (Singapore)",
+      "ACHIEVE - ",
+      "ARIC - ",
+      "BLSA - ",
+      "CLSA - ",
+      "MacM3 - ",
+      "NHANES - National Health and Nutrition Examination Survey",
+      "NHATS - ",
+      "RAINE - The Raine Study",
+      "STURDY - ",
+      "Tsuru - ",
+      "Wll - Whitehall study")
   
   harmo_group <- 
     menu(choices = choice_list,
          title = "What cohort do you want to harmonize?")
   
-  harmo_group <- substr(choice_list,1,3)[harmo_group]
+  harmo_group <- strsplit(choice_list[harmo_group], split = " - ")[[1]][1]
   
   message(paste0("We will now create the environment for ", harmo_group,"."))
   
@@ -68,9 +79,9 @@ if(!require(htmltools))    {install.packages("htmltools")}
 if(!require(car))    {install.packages("car")}
 
 # checks if packages need update
-if(packageVersion("fabR")     != "2.1.0"){install.packages("fabR")}
-if(packageVersion("madshapR") != "1.1.0"){install.packages("madshapR")}
-if(packageVersion("Rmonize")  != "1.1.0"){install.packages("Rmonize")}
+if(as.numeric( substr(packageVersion("fabR"), 1, 3) ) < 2.1 ){install.packages("fabR")}
+if(as.numeric( substr(packageVersion("madshapR"), 1, 3) ) < 2.0){install.packages("madshapR")}
+if(as.numeric( substr(packageVersion("Rmonize"), 1, 3) ) < 2.0){install.packages("Rmonize")}
 
 packages <- 
   as_tibble(installed.packages()) %>%
@@ -117,14 +128,20 @@ dir.create(paste0(folder_name, "/output_dataset"))
 
 # get processing files
 download.file(
-  url = "https://github.com/maelstrom-research/harmonization_ProPASS/raw/master/01_validation_inputs.R",
+  url = "https://github.com/maelstrom-research/harmonization_ProPASS/raw/master/baseline/01_validation_inputs.R",
   destfile = paste0(folder_name, "/01_validation_inputs.R"),
   mode = "wb")
 
 download.file(
-  url = "https://github.com/maelstrom-research/harmonization_ProPASS/raw/master/02_data_transformation.R",
+  url = "https://github.com/maelstrom-research/harmonization_ProPASS/raw/master//baseline/02_data_transformation.R",
   destfile = paste0(folder_name, "/02_data_transformation.R"),
   mode = "wb")
+
+download.file(
+  url = "https://github.com/maelstrom-research/harmonization_ProPASS/raw/master//baseline/A-avant_apres_harmo.R",
+  destfile = paste0(folder_name, "/A-avant_apres_harmo.R"),
+  mode = "wb")
+
 
 # Save initial parameters one in archives, one in current output project
 saveRDS(checks, paste0(folder_name, "/output_documents/checks_init", ".rds"))
