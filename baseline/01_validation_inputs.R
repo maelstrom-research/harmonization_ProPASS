@@ -200,15 +200,16 @@ if(nrow(dpe_list) == 1){
                        What variables do you want to harmonize?")
       if(specific == 2){
         checks$harmo_type <- "subset"
-        var_changed <- c(setdiff(dpe_local %>% select(dataschema_variable, contains("mlstr")),
-                               dpe_github %>% select(dataschema_variable, contains("mlstr"))
+        var_changed <- setdiff(dpe_local %>% select(dataschema_variable, input_variables, contains("mlstr")),
+                               dpe_github %>% select(dataschema_variable, input_variables, contains("mlstr"))
                                ) %>% 
-          pull(dataschema_variable),
-          setdiff(dpe_github %>% select(dataschema_variable, contains("mlstr")),
-                  dpe_local %>% select(dataschema_variable, contains("mlstr"))
-          ) %>% 
-            pull(dataschema_variable)
-        ) %>% unique
+          pull(dataschema_variable)
+        #   ,
+        #   setdiff(dpe_github %>% select(dataschema_variable, contains("mlstr")),
+        #           dpe_local %>% select(dataschema_variable, contains("mlstr"))
+        #   ) %>% 
+        #     pull(dataschema_variable)
+        # ) %>% unique #@testing 
         
         dpe_github <- dpe_github %>% 
           filter((trimws(`Mlstr_harmo::rule_category`) == "id_creation") |
