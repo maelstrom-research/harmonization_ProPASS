@@ -1,5 +1,5 @@
 #---- Load packages and inputs ----
-# v1.0
+# v1.1
 library(janitor)
 library(htmltools)
 library(purrr)
@@ -48,12 +48,17 @@ if(nrow(harmo_errors) == 0){
   checks$harmonization_errors <- FALSE
   checks$harmonization_errors_detail <- NULL
   
+  checks$errors <- NA
 }else{
   
   checks$harmonization_errors <- TRUE  
   checks$harmonization_errors_detail <-     
     attributes(harmonized_dataset)$`Rmonize::Data Processing Elements`
   
+  checks$errors <- checks$harmonization_errors_detail %>% 
+    select(index, dataschema_variable, valueType, input_variables, 
+           `Mlstr_harmo::algorithm`, `Rmonize::r_script`, `Rmonize::error_status`) %>% 
+    filter(!is.na(`Rmonize::error_status`)) 
 }
 
 saveRDS(checks, checks_path)
@@ -137,6 +142,33 @@ if(!any(checks$harmonization_errors)){
   write_excel_allsheets(
     output_summary,
     output_summary_path)
+  
+  
+  # Harmonization for variable without errors
+  harmonized_dataset <- harmo_process(
+    dossier,
+    data_dict_filter(dataschema, filter_var = "!name %in% checks$errors$dataschema_variable"),
+    DPE %>% filter(!dataschema_variable %in% checks$errors$dataschema_variable)
+  )
+  
+  # before after report
+  before_after_report <- 
+    avant_apres_harmo(dossier,harmonized_dataset,split_by = "Mlstr_harmo::rule_category")
+  
+  
+  # Save and stop
+  write_excel_allsheets(before_after_report,
+                        paste0("output_documents/","before_after_report-",
+                               checks$harmo_group,'.xlsx'))
+  saveRDS(checks, paste0("output_documents/checks-", checks$harmo_group, ".rds"))
+  
+  stop("--------------------
+       
+       Errors found during harmonization! 
+       Only variables without errors were harmonized.
+       
+       ----------------s
+       ")
   
 }
 
