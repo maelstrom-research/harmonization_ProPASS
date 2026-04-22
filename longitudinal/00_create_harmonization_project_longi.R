@@ -54,8 +54,18 @@ intro <- function(){
       "MSN - The Maastricht Study (The Netherlands)",
       "NES - Nijmegen Exercise Study/ Healthy Brain",
       "NHS - The Trøndelag Health Study (HUNT 4) (Norway)",
-      "SHR - Survey of health, aging and Retirement in Europe"
+      "SHR - Survey of health, aging and Retirement in Europe",
       #"SHS - Singapore Population Health Studies (Singapore)"
+       "RAINE - The Raine Study",
+       "ARIC - Atherosclerosis Risk in Communities",
+       "ACHIEVE - Aging and Cognitive Health Evaluation in Elders",
+       "NHATS - National Health and Aging Trends Study",
+       "STURDY - Study To Understand Fall Reduction and Vitamin D in You",
+       "WII - Whitehall study II",
+       "MacM3 - McMaster Monitoring My Mobility",
+       "CLSA - Canadian Longitudinal Study on Aging",
+       "Tsuru - Tsuru Longitudinal Study",
+       "LISS - LISS panel"
       )
   
   harmo_group <- 
