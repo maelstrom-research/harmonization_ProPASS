@@ -55,7 +55,7 @@ intro <- function(){
       "NES - Nijmegen Exercise Study/ Healthy Brain",
       "NHS - The Trøndelag Health Study (HUNT 4) (Norway)",
       "SHR - Survey of health, aging and Retirement in Europe",
-      #"SHS - Singapore Population Health Studies (Singapore)"
+      #"SHS - Singapore Population Health Studies (Singapore)",
        "RAINE - The Raine Study",
        "ARIC - Atherosclerosis Risk in Communities",
        "ACHIEVE - Aging and Cognitive Health Evaluation in Elders",
