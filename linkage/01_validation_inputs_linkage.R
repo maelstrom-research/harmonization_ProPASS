@@ -334,10 +334,10 @@ if(checks$harmo_type == "all"){
   # save the data dictionary in specified folder
   write_excel_allsheets(
     data_dictionnary,
-    paste0("output_documents/input data dictionaries/","extracted_data_dict_",input_dataset$name, ".xlsx"))
+    paste0("output_documents/input data dictionaries/","extracted_data_dict_linkage_",input_dataset$name, ".xlsx"))
   write_excel_allsheets(
     data_summary,
-    paste0("output_documents/input data summaries/","data_summary_",input_dataset$name, ".xlsx"))
+    paste0("output_documents/input data summaries/","data_summary_linkage_",input_dataset$name, ".xlsx"))
   
   message("-summary reports saved-")
   
