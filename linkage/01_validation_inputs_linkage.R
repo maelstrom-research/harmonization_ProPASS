@@ -77,7 +77,7 @@ rm(list = c("time_stamp", "checks_list"))
 #---- Get the dataschema ----
 download.file(
   url = "https://github.com/maelstrom-research/harmonization_ProPASS/raw/master/linkage/DS_ProPASS_linkage_1_0_2026_05_01.xlsx",
-  destfile = "input_documents/DS_ProPASS_linkage_1_0_2026_05_01.xlsx",
+  destfile = "input_documents/DS_ProPASS_linkage_1_0_2026_05_01_github.xlsx",
   mode = "wb")
 
 dataschema_github <- read_excel_allsheets("input_documents/DS_ProPASS_linkage_1_0_2026_05_01_github.xlsx")
