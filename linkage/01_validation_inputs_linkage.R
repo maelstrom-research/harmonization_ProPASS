@@ -143,7 +143,7 @@ dpe_list <- file.info(list.files("input_documents",
 # Get from Github
 download.file(
   url = paste0(
-    "https://github.com/maelstrom-research/harmonization_ProPASS/raw/master/baseline/data_processing_elements_linkage-",
+    "https://github.com/maelstrom-research/harmonization_ProPASS/raw/master/linkage/data_processing_elements_linkage-",
     checks$harmo_group,".xlsx"), 
   destfile = paste0("input_documents/data_processing_element_linkage-",
                     checks$harmo_group, 
