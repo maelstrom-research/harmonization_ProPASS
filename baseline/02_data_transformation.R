@@ -153,7 +153,7 @@ if(!any(checks$harmonization_errors)){
   
   # before after report
   before_after_report <- 
-    avant_apres_harmo(dossier,harmonized_dataset,split_by = "Mlstr_harmo::rule_category")
+    avant_apres_harmo(dossier,harmonized_dataset,split_by = "Mlstr_harmo::rule_category",summarize_output =FALSE)
   
   
   # Save and stop
