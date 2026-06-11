@@ -116,6 +116,10 @@ download.file(
   url = "https://github.com/maelstrom-research/harmonization_ProPASS/raw/refs/heads/master/longitudinal/02_data_transformation_longi_updated.R",
   destfile = paste0(folder_name, "/02_data_transformation_longi_updated.R"),
   mode = "wb")
+download.file(
+  url = "https://github.com/maelstrom-research/harmonization_ProPASS/raw/refs/heads/master/longitudinal/03-crossreference_check_longitudinal.R",
+  destfile = paste0(folder_name, "/03-crossreference_check_longitudinal.R"),
+  mode = "wb")
 
 #---- Save and open project ----
 
