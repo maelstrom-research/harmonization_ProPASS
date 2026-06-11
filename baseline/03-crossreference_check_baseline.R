@@ -348,4 +348,4 @@ if (nrow(data %>% filter(!is.na(phy_mobility_limitation_SF36) & phy_mobility_lim
 }
 
 # save crossref checks
-write_rds(cross_ref,paste0("output_documents/crossref_baseline_checks_",Sys.Date(),".rds"))
+write_rds(crossref,paste0("output_documents/crossref_baseline_checks_",Sys.Date(),".rds"))
