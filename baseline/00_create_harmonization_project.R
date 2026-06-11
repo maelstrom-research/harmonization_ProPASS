@@ -139,6 +139,11 @@ download.file(
   mode = "wb")
 
 download.file(
+  url = "https://github.com/maelstrom-research/harmonization_ProPASS/raw/master//baseline/03-crossreference_check_baseline.R",
+  destfile = paste0(folder_name, "/03-crossreference_check_baseline.R"),
+  mode = "wb")
+
+download.file(
   url = "https://github.com/maelstrom-research/harmonization_ProPASS/raw/master//baseline/A-avant_apres_harmo.R",
   destfile = paste0(folder_name, "/A-avant_apres_harmo.R"),
   mode = "wb")
