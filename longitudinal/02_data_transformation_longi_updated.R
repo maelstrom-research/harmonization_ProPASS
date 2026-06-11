@@ -759,7 +759,8 @@ if(!any(checks$harmonization_errors)){
   before_after_report <- 
     avant_apres_harmo(dossier = dossier_to_harmonize,
                       harmonized_dossier = harmonized_dossier,
-                      split_by = "Mlstr_harmo::rule_category")
+                      split_by = "Mlstr_harmo::rule_category",
+                      summarize_output = FALSE)
   
   # before_after_report_path <- 
   #   paste0("output_documents/","before_after_report-",
