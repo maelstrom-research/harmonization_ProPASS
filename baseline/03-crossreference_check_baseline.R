@@ -45,42 +45,35 @@ if(dpe$`Mlstr_harmo::status`[which(dpe$dataschema_variable == "sdc_highest_educa
 
 # verify asian ethnicity
 if(dpe$`Mlstr_harmo::status`[which(dpe$dataschema_variable == "sdc_ethn_asian")] == "complete" & dpe$`Mlstr_harmo::status`[which(dpe$dataschema_variable == "sdc_ethn_east_asian")] == "complete") {
-  if (nrow(data %>% filter((sdc_ethn_asian == 0 & sdc_ethn_east_asian == 1))) > 0 | nrow(data %>% filter((sdc_ethn_asian == 1 & sdc_ethn_east_asian == 0))) > 0) {
+  if (nrow(data %>% filter((sdc_ethn_asian == 0 & sdc_ethn_east_asian == 1))) > 0) {
     
-    crossref["East Asian"] <- data.frame(c(paste0(as.character(nrow(data %>% filter((sdc_ethn_asian == 0 & sdc_ethn_east_asian == 1)))),
-                                                 " participant(s) have Asian as No but have East Asian as Yes."),
-                                          paste0(as.character(nrow(data %>% filter((sdc_ethn_asian == 1 & sdc_ethn_east_asian == 0)))),
-                                                 " participant(s) have Asian as Yes but have East Asian as No (with East Asian set as complete).")))
+    crossref["East Asian"] <- data.frame(paste0(as.character(nrow(data %>% filter((sdc_ethn_asian == 0 & sdc_ethn_east_asian == 1)))),
+                                                 " participant(s) have Asian as No but have East Asian as Yes."))
   }
 }
 if(dpe$`Mlstr_harmo::status`[which(dpe$dataschema_variable == "sdc_ethn_asian")] == "complete" & dpe$`Mlstr_harmo::status`[which(dpe$dataschema_variable == "sdc_ethn_south_asian")] == "complete") {
-  if (nrow(data %>% filter((sdc_ethn_asian == 0 & sdc_ethn_east_asian == 1))) > 0 | nrow(data %>% filter((sdc_ethn_asian == 1 & sdc_ethn_south_asian == 0))) > 0) {
+  if (nrow(data %>% filter((sdc_ethn_asian == 0 & sdc_ethn_east_asian == 1))) > 0 ) {
     
-    crossref["South Asian"] <- data.frame(c(paste0(as.character(nrow(data %>% filter((sdc_ethn_asian == 0 & sdc_ethn_south_asian == 1)))),
-                                                  " participant(s) have Asian as No but have South Asian as Yes."),
-                                           paste0(as.character(nrow(data %>% filter((sdc_ethn_asian == 1 & sdc_ethn_south_asian == 0)))),
-                                                  " participant(s) have Asian as Yes but have South Asian as No (with South Asian set as complete).")))
+    crossref["South Asian"] <- data.frame(paste0(as.character(nrow(data %>% filter((sdc_ethn_asian == 0 & sdc_ethn_south_asian == 1)))),
+                                                  " participant(s) have Asian as No but have South Asian as Yes."))
   }
 }
 if(dpe$`Mlstr_harmo::status`[which(dpe$dataschema_variable == "sdc_ethn_asian")] == "complete" & dpe$`Mlstr_harmo::status`[which(dpe$dataschema_variable == "sdc_ethn_southeast_asian")] == "complete") {
-  if (nrow(data %>% filter((sdc_ethn_asian == 0 & sdc_ethn_east_asian == 1))) > 0 | nrow(data %>% filter((sdc_ethn_asian == 1 & sdc_ethn_southeast_asian == 0))) > 0) {
+  if (nrow(data %>% filter((sdc_ethn_asian == 0 & sdc_ethn_east_asian == 1))) > 0) {
     
-    crossref["Southeast Asian"] <- data.frame(c(paste0(as.character(nrow(data %>% filter((sdc_ethn_asian == 0 & sdc_ethn_southeast_asian == 1)))),
-                                                  " participant(s) have Asian as No but have Southeast Asian as Yes."),
-                                           paste0(as.character(nrow(data %>% filter((sdc_ethn_asian == 1 & sdc_ethn_southeast_asian == 0)))),
-                                                  " participant(s) have Asian as Yes but have Southeast Asian as No (with Southeast Asian set as complete).")))
-  }
-}
-if(dpe$`Mlstr_harmo::status`[which(dpe$dataschema_variable == "sdc_ethn_asian")] == "complete" & dpe$`Mlstr_harmo::status`[which(dpe$dataschema_variable == "sdc_ethn_west_asian")] == "complete") {
-  if (nrow(data %>% filter((sdc_ethn_asian == 0 & sdc_ethn_east_asian == 1))) > 0 | nrow(data %>% filter((sdc_ethn_asian == 1 & sdc_ethn_west_asian == 0))) > 0) {
-    
-    crossref["West Asian"] <- data.frame(c(paste0(as.character(nrow(data %>% filter((sdc_ethn_asian == 0 & sdc_ethn_west_asian == 1)))),
-                                                  " participant(s) have Asian as No but have East West as Yes."),
-                                           paste0(as.character(nrow(data %>% filter((sdc_ethn_asian == 1 & sdc_ethn_west_asian == 0)))),
-                                                  " participant(s) have Asian as Yes but have East West as No (with West Asian set as complete).")))
+    crossref["Southeast Asian"] <- data.frame(paste0(as.character(nrow(data %>% filter((sdc_ethn_asian == 0 & sdc_ethn_southeast_asian == 1)))),
+                                                  " participant(s) have Asian as No but have Southeast Asian as Yes."))
   }
 }
 
+## verify employment
+#if(dpe$`Mlstr_harmo::status`[which(dpe$dataschema_variable == "sdc_employment_status")] == "complete" & dpe$`Mlstr_harmo::status`[which(dpe$dataschema_variable == "sdc_employment_time")] == "complete") {
+#  if (nrow(data %>% filter((sdc_employment_status == 0 & !is.na(sdc_employment_time)))) > 0) {
+#    
+#    crossref["employment"] <- data.frame(paste0(as.character(nrow(data %>% filter((sdc_employment_status == 0 & !is.na(sdc_employment_time)))))),
+#                                                  " participant(s) have employment = 0 (unemployed) with but participant indicated working full-time or part-time")
+#  }
+#}
 
 # verify height
 if(dpe$`Mlstr_harmo::status`[which(dpe$dataschema_variable == "pm_height")] == "complete" & dpe$`Mlstr_harmo::status`[which(dpe$dataschema_variable == "pm_height_method")] == "complete") {
