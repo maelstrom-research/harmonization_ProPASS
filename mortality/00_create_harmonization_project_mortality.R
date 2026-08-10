@@ -117,7 +117,7 @@ current_dir <- dirname(current_dir)
 setwd(current_dir)
 
 # Create folders for your harmonization
-folder_name <- paste0("harmonization_", harmo_group)
+folder_name <- paste0("harmonization_mortality_", harmo_group)
 
 rstudioapi::initializeProject(path = folder_name)
 
