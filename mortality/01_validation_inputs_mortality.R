@@ -64,7 +64,7 @@ if(length(checks_list) > 0){
     to = str_replace_all(checks_list,"output_documents/","archive/")))}
 
 checks_path <- 
-  paste0("output_documents/checks-",checks$harmo_group,"-",format(time_stamp,"%Y-%m-%H%M%S"), ".rds")
+  paste0("output_documents/checks-",checks$harmo_group,"-",format(time_stamp,"%Y-%m-%d-%H%M%S"), ".rds")
 
 invisible(file.copy(from = "output_documents/checks_init.rds",to = checks_path))
 
