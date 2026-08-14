@@ -76,15 +76,15 @@ rm(list = c("time_stamp", "checks_list"))
 
 #---- Get the dataschema ----
 download.file(
-  url = "https://github.com/maelstrom-research/harmonization_ProPASS/raw/master/linkage/DS_ProPASS_linkage_1_0_2026_05_01.xlsx",
-  destfile = "input_documents/DS_ProPASS_linkage_1_0_2026_05_01_github.xlsx",
+  url = "https://github.com/maelstrom-research/harmonization_ProPASS/raw/master/linkage/dataschema_linkage_mortality.xlsx",   # updated dataschema
+  destfile = "input_documents/dataschema_linkage_mortality_github.xlsx",
   mode = "wb")
 
-dataschema_github <- read_excel_allsheets("input_documents/DS_ProPASS_linkage_1_0_2026_05_01_github.xlsx")
+dataschema_github <- read_excel_allsheets("input_documents/dataschema_linkage_mortality.xlsx")
 
 # Compare dataschema versions
-if(file.exists("input_documents/DS_ProPASS_linkage_1_0_2026_05_01.xlsx")){
-  dataschema_local <- read_excel_allsheets("input_documents/DS_ProPASS_linkage_1_0_2026_05_01.xlsx")
+if(file.exists("input_documents/dataschema_linkage_mortality.xlsx")){                       # updated dataschema name everywhere, but check that dataschema_linkage_mortality.xlsx is archived in projects
+  dataschema_local <- read_excel_allsheets("input_documents/dataschema_linkage_mortality.xlsx")
   
   
   test_all_equal <- try(all(dataschema_local$Variables  == dataschema_github$Variables,
@@ -94,12 +94,12 @@ if(file.exists("input_documents/DS_ProPASS_linkage_1_0_2026_05_01.xlsx")){
   
   if(test_all_equal){
     checks$dataschema_uptodate <- "No change since last run."
-    invisible(file.remove("input_documents/DS_ProPASS_linkage_1_0_2026_05_01_github.xlsx"))
+    invisible(file.remove("input_documents/dataschema_linkage_mortality_github.xlsx"))
   }else{
-    file.rename(from = "input_documents/DS_ProPASS_linkage_1_0_2026_05_01.xlsx",
-                to = paste0("archive/DS_ProPASS_linkage_1_0_2026_05_01_archived-", format(checks$time_stamp,"%Y-%m-%H%M%S"), ".xlsx"))
-    file.rename(from = "input_documents/DS_ProPASS_linkage_1_0_2026_05_01_github.xlsx",
-                to = "input_documents/DS_ProPASS_linkage_1_0_2026_05_01.xlsx")
+    file.rename(from = "input_documents/dataschema_linkage_mortality.xlsx",
+                to = paste0("archive/dataschema_linkage_mortality_archived-", format(checks$time_stamp,"%Y-%m-%H%M%S"), ".xlsx"))
+    file.rename(from = "input_documents/dataschema_linkage_mortality_github.xlsx",
+                to = "input_documents/dataschema_linkage_mortality.xlsx")
     message("
     
           ----------------
@@ -115,9 +115,9 @@ if(file.exists("input_documents/DS_ProPASS_linkage_1_0_2026_05_01.xlsx")){
 }
 
 # If the first using the script
-if(!file.exists("input_documents/DS_ProPASS_linkage_1_0_2026_05_01.xlsx")){
-  file.rename(from = "input_documents/DS_ProPASS_linkage_1_0_2026_05_01_github.xlsx",
-              to = "input_documents/DS_ProPASS_linkage_1_0_2026_05_01.xlsx")
+if(!file.exists("input_documents/dataschema_linkage_mortality.xlsx")){
+  file.rename(from = "input_documents/dataschema_linkage_mortality_github.xlsx",
+              to = "input_documents/dataschema_linkage_mortality.xlsx")
   
   checks$dataschema_uptodate <- "First download of the dataschema"
 }
