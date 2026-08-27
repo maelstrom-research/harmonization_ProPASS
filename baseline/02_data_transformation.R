@@ -122,7 +122,16 @@ if(!any(checks$harmonization_errors)){
   write_excel_allsheets(
     harmonized_data_dict,
     harmonized_data_dict_path)
-  
+
+    ## Save dossier
+  if (!dir.exists("output_dataset/dossier")) {
+    dir.create("output_dataset/dossier", recursive = TRUE)
+  }
+  harmonized_dossier_path <- 
+    paste0("output_dataset/dossier/","harmonized_dossier-",
+           checks$harmo_group,'.rds')
+  saveRDS(harmonized_dataset, harmonized_dossier_path)
+
   # visual report
 #  viz_path <- 
 #    paste0("output_documents/","visual_report-",checks$harmo_group)
