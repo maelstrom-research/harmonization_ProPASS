@@ -802,7 +802,16 @@ if(!any(checks$harmonization_errors)){
     harmonized_data_dict,
     paste0("output_documents/","harmonized_data_dict_longitudinal-",
            checks$harmo_group,'.xlsx'))
-  
+
+      ## Save dossier
+  if (!dir.exists("output_dataset/dossier")) {
+    dir.create("output_dataset/dossier", recursive = TRUE)
+  }
+  harmonized_dossier_path <- 
+    paste0("output_dataset/dossier/","harmonized_dossier_longitudinal-",
+           checks$harmo_group,'.rds')
+  saveRDS(harmonized_dossier, harmonized_dossier_path)
+
   # visual report
   #  viz_path <- 
   #    paste0("output_documents/","visual_report-",checks$harmo_group)
