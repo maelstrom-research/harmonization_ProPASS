@@ -16,7 +16,7 @@ avant_apres_harmo <- function(
     dossier = NULL, 
     harmonized_dossier = NULL, 
     split_by = NULL,
-    summarize_output = TRUE,
+    summarize_output = FALSE,
     data_proc_elem = attributes(harmonized_dossier)$`Rmonize::Data Processing Elements`,
     dataschema = attributes(harmonized_dossier)$`Rmonize::DataSchema`,
     dataset = NULL,
