@@ -80,7 +80,7 @@ download.file(
   destfile = "input_documents/dataschema_linkage_mortality_github.xlsx",
   mode = "wb")
 
-dataschema_github <- read_excel_allsheets("input_documents/dataschema_linkage_mortality.xlsx")
+dataschema_github <- read_excel_allsheets("input_documents/dataschema_linkage_mortality_github.xlsx")
 
 # Compare dataschema versions
 if(file.exists("input_documents/dataschema_linkage_mortality.xlsx")){                       # updated dataschema name everywhere, but check that dataschema_linkage_mortality.xlsx is archived in projects
