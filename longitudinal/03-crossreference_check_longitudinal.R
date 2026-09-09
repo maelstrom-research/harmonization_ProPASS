@@ -1,8 +1,8 @@
 ### Crossreference check for validation - LONGITUDINAL
 ### v3 : More flexible wave check
 
-source("propass_crosscheck_helpers.R")
-source("propass_crosscheck_battery.R")
+source("propass_crosscheck_helpers_longitudinal.R")
+source("propass_crosscheck_battery_longitudinal.R")
 
 ## ---------------------------------------------------------------------------
 ## Inputs
