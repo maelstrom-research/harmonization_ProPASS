@@ -15,7 +15,7 @@ intro <- function(){
       - Downloads required files
       - Opens a rproject where you will work
   
-    Please contact us if you have any issues: harmo-propass@maelstrom-research.org")
+    Please contact us if you have any issues: twey@maelstrom-research.org")
   
   choice_list <-
     c("AGN - Active aging - The AGNES study",
