@@ -112,6 +112,16 @@ if(!any(checks$harmonization_errors)){
   write_excel_allsheets(
     pooled_harmonized_dataset,
     harmonized_data_path)
+
+  ## Save dossier
+  if (!dir.exists("output_dataset/dossier")) {
+    dir.create("output_dataset/dossier", recursive = TRUE)
+  }
+  harmonized_dossier_path <- 
+    paste0("output_dataset/dossier/","harmonized_dossier_linkage-",
+           checks$harmo_group,'.rds')
+  saveRDS(harmonized_dossier, harmonized_dossier_path)
+
   
   # harmonized data dict
   harmonized_data_dict <- 
