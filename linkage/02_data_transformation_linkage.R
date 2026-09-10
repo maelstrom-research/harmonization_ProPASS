@@ -120,7 +120,7 @@ if(!any(checks$harmonization_errors)){
   harmonized_dossier_path <- 
     paste0("output_dataset/dossier/","harmonized_dossier_linkage-",
            checks$harmo_group,'.rds')
-  saveRDS(harmonized_dossier, harmonized_dossier_path)
+  saveRDS(harmonized_dataset, harmonized_dossier_path)
 
   
   # harmonized data dict
