@@ -31,7 +31,7 @@ get_input_var_names <- function(data_proc_elem){
 }
 
 # email contact if problems
-email_contact <- "sbtiali@maelstrom-research.org"
+email_contact <- "twey@maelstrom-research.org"
 
 # get time track
 time_stamp <- Sys.time()
