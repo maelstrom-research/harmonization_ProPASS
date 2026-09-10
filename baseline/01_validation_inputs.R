@@ -145,11 +145,11 @@ download.file(
   url = paste0(
     "https://github.com/maelstrom-research/harmonization_ProPASS/raw/master/baseline/data_processing_elements-",
     checks$harmo_group,".xlsx"), 
-  destfile = paste0("input_documents/data_processing_element-",
+  destfile = paste0("input_documents/data_processing_element-data_processing_elements-",
                     checks$harmo_group, 
                     "-github.xlsx"),
   mode = "wb")
-dpe_github <- read_excel_allsheets(paste0("input_documents/data_processing_element-",
+dpe_github <- read_excel_allsheets(paste0("input_documents/data_processing_element-data_processing_elements-",
                                           checks$harmo_group, 
                                           "-github.xlsx"))
 
@@ -172,7 +172,7 @@ if(nrow(dpe_list) == 1){
   dpe_local <- read_excel_allsheets(dpe_list$name)
   
   if(identical(dpe_local, dpe_github)){
-    file.remove(paste0("input_documents/data_processing_element-",
+    file.remove(paste0("input_documents/data_processing_element-data_processing_elements-",
                        checks$harmo_group, 
                        "-github.xlsx"))
   }else{
@@ -183,10 +183,10 @@ if(nrow(dpe_list) == 1){
                      dpe_list$name) )
     )
     file.rename(
-      from = paste0("input_documents/data_processing_element-",
+      from = paste0("input_documents/data_processing_element-data_processing_elements-",
                     checks$harmo_group, 
                     "-github.xlsx"),
-      to = paste0("input_documents/data_processing_element-",
+      to = paste0("input_documents/data_processing_element-data_processing_elements-",
                   checks$harmo_group, 
                   "-", format(checks$time_stamp, "%Y-%m-%d"), ".xlsx")
     ) 
@@ -215,7 +215,7 @@ if(nrow(dpe_list) == 1){
           filter((trimws(`Mlstr_harmo::rule_category`) == "id_creation") |
                    dataschema_variable %in% var_changed)
         write_excel_allsheets(dpe_github,
-                              paste0("input_documents/data_processing_element-",
+                              paste0("input_documents/data_processing_element-data_processing_elements-",
                                      checks$harmo_group, 
                                      "-", format(checks$time_stamp, "%Y-%m-%d"), ".xlsx")
         )
@@ -234,10 +234,10 @@ if(nrow(dpe_list) == 1){
 # If first time running script
 if(nrow(dpe_list) == 0){
   file.rename(
-    from = paste0("input_documents/data_processing_element-",
+    from = paste0("input_documents/data_processing_element-data_processing_elements-",
                   checks$harmo_group, 
                   "-github.xlsx"),
-    to = paste0("input_documents/data_processing_element-",
+    to = paste0("input_documents/data_processing_element-data_processing_elements-",
                 checks$harmo_group, 
                 "-", format(checks$time_stamp, "%Y-%m-%d"), ".xlsx")
   )
