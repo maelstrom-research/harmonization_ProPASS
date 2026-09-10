@@ -153,7 +153,7 @@ download.file(
 
 download.file(
   url = "https://github.com/maelstrom-research/harmonization_ProPASS/raw/master/baseline/propass_crosscheck_helpers.R",
-  destfile = paste0(folder_name, "/propass_crosscheck_battery.R"),
+  destfile = paste0(folder_name, "/propass_crosscheck_helpers.R"),
   mode = "wb")
 
 download.file(
