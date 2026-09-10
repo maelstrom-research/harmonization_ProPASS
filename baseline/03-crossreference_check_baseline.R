@@ -56,7 +56,7 @@ dir.create("output_documents", showWarnings = FALSE)
 stamp <- Sys.Date()
 
 crossref <- chk$findings()                       # same shape as v1, for compatibility
-write_rds(crossref, paste0("output_documents/crossref_baseline_checks_",checks$harmo_group, "_", stamp, ".rds"))
-write_csv(report,   paste0("output_documents/crossref_baseline_checks_",checks$harmo_group, "_", stamp, ".csv"))
+write_rds(crossref, paste0("output_documents/crossref_baseline_checks_",data$adm_study_id[[1]], "_", stamp, ".rds"))
+write_csv(report,   paste0("output_documents/crossref_baseline_checks_",data$adm_study_id[[1]], "_", stamp, ".csv"))
 
-message("\nwrote output_documents/crossref_baseline_checks_",checks$harmo_group, "_", stamp, ".{rds,csv}")
+message("\nwrote output_documents/crossref_baseline_checks_",data$adm_study_id[[1]], "_", stamp, ".{rds,csv}")
