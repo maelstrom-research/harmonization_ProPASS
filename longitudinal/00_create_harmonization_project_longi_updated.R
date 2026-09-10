@@ -120,6 +120,14 @@ download.file(
   url = "https://github.com/maelstrom-research/harmonization_ProPASS/raw/refs/heads/master/longitudinal/03-crossreference_check_longitudinal.R",
   destfile = paste0(folder_name, "/03-crossreference_check_longitudinal.R"),
   mode = "wb")
+download.file(
+  url = "https://github.com/maelstrom-research/harmonization_ProPASS/raw/refs/heads/master/longitudinal/03-crossreference_check_longitudinal.R",
+  destfile = paste0(folder_name, "/propass_crosscheck_battery_longitudinal.R"),
+  mode = "wb")
+download.file(
+  url = "https://github.com/maelstrom-research/harmonization_ProPASS/raw/refs/heads/master/longitudinal/03-crossreference_check_longitudinal.R",
+  destfile = paste0(folder_name, "/propass_crosscheck_helpers_longitudinal.R"),
+  mode = "wb")
 
 #---- Save and open project ----
 
