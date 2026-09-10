@@ -137,17 +137,27 @@ download.file(
   mode = "wb")
 
 download.file(
-  url = "https://github.com/maelstrom-research/harmonization_ProPASS/raw/master//baseline/02_data_transformation.R",
+  url = "https://github.com/maelstrom-research/harmonization_ProPASS/raw/master/baseline/02_data_transformation.R",
   destfile = paste0(folder_name, "/02_data_transformation.R"),
   mode = "wb")
 
 download.file(
-  url = "https://github.com/maelstrom-research/harmonization_ProPASS/raw/master//baseline/03-crossreference_check_baseline.R",
+  url = "https://github.com/maelstrom-research/harmonization_ProPASS/raw/master/baseline/03-crossreference_check_baseline.R",
   destfile = paste0(folder_name, "/03-crossreference_check_baseline.R"),
   mode = "wb")
 
 download.file(
-  url = "https://github.com/maelstrom-research/harmonization_ProPASS/raw/master//baseline/A-avant_apres_harmo.R",
+  url = "https://github.com/maelstrom-research/harmonization_ProPASS/raw/master/baseline/propass_crosscheck_battery.R",
+  destfile = paste0(folder_name, "/propass_crosscheck_battery.R"),
+  mode = "wb")
+
+download.file(
+  url = "https://github.com/maelstrom-research/harmonization_ProPASS/raw/master/baseline/propass_crosscheck_helpers.R",
+  destfile = paste0(folder_name, "/propass_crosscheck_battery.R"),
+  mode = "wb")
+
+download.file(
+  url = "https://github.com/maelstrom-research/harmonization_ProPASS/raw/master/baseline/A-avant_apres_harmo.R",
   destfile = paste0(folder_name, "/A-avant_apres_harmo.R"),
   mode = "wb")
 
