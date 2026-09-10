@@ -11,7 +11,7 @@ library(haven)
 library(tools)
 
 # email contact if problems
-email_contact <- "harmo-propass@maelstrom-research.org"
+email_contact <- "twey@maelstrom-research.org"
 
 # get time track
 time_stamp <- Sys.time()
@@ -70,20 +70,20 @@ If you see this message again, please contact Maelstrom Research at ", email_con
 if(!file.exists("input_documents/dataschema_ProPASS.xlsx")){
   download.file(
     url = "https://github.com/maelstrom-research/harmonization_ProPASS/raw/master/longitudinal/dataschema_ProPASS_longitudinal.xlsx",
-    destfile = "input_documents/dataschema_ProPASS.xlsx",
+    destfile = "input_documents/dataschema_ProPASS_longitudinal.xlsx",
     mode = "wb")
   
-  dataschema <- read_excel_allsheets("input_documents/dataschema_ProPASS.xlsx")
+  dataschema <- read_excel_allsheets("input_documents/dataschema_ProPASS_longitudinal.xlsx")
   checks$dataschema_uptodate <- "Ok: First download"
 }else{
   # Download dataschema github for comparison
   download.file(
     url = "https://github.com/maelstrom-research/harmonization_ProPASS/raw/master/longitudinal/dataschema_ProPASS_longitudinal.xlsx",
-    destfile = "input_documents/dataschema_ProPASS_github.xlsx",
+    destfile = "input_documents/dataschema_ProPASS_longitudinal_github.xlsx",
     mode = "wb")
   
-  dataschema_local <- read_excel_allsheets("input_documents/dataschema_ProPASS.xlsx")
-  dataschema_github <- read_excel_allsheets("input_documents/dataschema_ProPASS_github.xlsx")
+  dataschema_local <- read_excel_allsheets("input_documents/dataschema_ProPASS_longitudinal.xlsx")
+  dataschema_github <- read_excel_allsheets("input_documents/dataschema_ProPASS_longitudinal_github.xlsx")
   
   # Compare dataschema
   test_all_equal <- try(all(dataschema_local$Variables  == dataschema_github$Variables,
@@ -93,17 +93,17 @@ if(!file.exists("input_documents/dataschema_ProPASS.xlsx")){
   # Keep proper dataschema
   if(test_all_equal){
     dataschema <- dataschema_local
-    invisible(file.remove("input_documents/dataschema_ProPASS_github.xlsx"))
+    invisible(file.remove("input_documents/dataschema_ProPASS_longitudinal_github.xlsx"))
     checks$dataschema_uptodate <- "Ok: No change"
   }else{
     dataschema <- dataschema_github
     #Archive current dataschema 
-    file.copy(from = "input_documents/dataschema_ProPASS.xlsx",
+    file.copy(from = "input_documents/dataschema_ProPASS_longitudinal.xlsx",
               to = paste0("archive/dataschema_archived", format(time_stamp,"_%Y%m%d%H%M%S"), ".xlsx"))
-    invisible(file.remove("input_documents/dataschema_ProPASS.xlsx"))
+    invisible(file.remove("input_documents/dataschema_ProPASS_longitudinal.xlsx"))
     #Replace by github dataschema
-    file.rename(from = "input_documents/dataschema_ProPASS_github.xlsx",
-                to = "input_documents/dataschema_ProPASS.xlsx")
+    file.rename(from = "input_documents/dataschema_ProPASS_longitudinal_github.xlsx",
+                to = "input_documents/dataschema_ProPASS_longitudinal.xlsx")
     
     checks$dataschema_uptodate <- "Warning: dataschema was updated"
     }
@@ -118,11 +118,11 @@ download.file(
   url = paste0(
     "https://github.com/maelstrom-research/harmonization_ProPASS/raw/master/longitudinal/data_processing_elements_longitudinal-",
     checks$harmo_group,".xlsx"), 
-  destfile = "input_documents/data_processing_element-Github.xlsx",
+  destfile = "input_documents/data_processing_elements_longitudinal-Github.xlsx",
   mode = "wb")
 
 # Load DPE(s)
-dpe_path <- paste0("input_documents/data_processing_element-",
+dpe_path <- paste0("input_documents/data_processing_elements_longitudinal-",
                    checks$harmo_group,
                    ".xlsx")
 if(file.exists(dpe_path)){
@@ -130,7 +130,7 @@ if(file.exists(dpe_path)){
 }else{
   dpe_local <- tibble(None = TRUE)
 }
-dpe_github <- read_excel_allsheets("input_documents/data_processing_element-Github.xlsx")
+dpe_github <- read_excel_allsheets("input_documents/data_processing_elements_longitudinal-Github.xlsx")
 
 # Compare data processing elements
 test_all_equal <- try(all(dpe_local == dpe_github, na.rm = TRUE),silent = TRUE)
@@ -138,7 +138,7 @@ if(class(test_all_equal)[1] == "try-error") test_all_equal <- FALSE
 
 # Keep correct DPE and archive if needed
 if(test_all_equal){
-  invisible(file.remove("input_documents/data_processing_element-Github.xlsx"))
+  invisible(file.remove("input_documents/data_processing_elements_longitudinal-Github.xlsx"))
   DPE <- dpe_local
 }
 if((!"None" %in% names(dpe_local)) & !test_all_equal){
@@ -148,7 +148,7 @@ if((!"None" %in% names(dpe_local)) & !test_all_equal){
   invisible(file.remove(dpe_path))
 }
 if(!test_all_equal){
-  file.rename(from = "input_documents/data_processing_element-Github.xlsx",
+  file.rename(from = "input_documents/data_processing_elements_longitudinal-Github.xlsx",
               to = dpe_path)
   DPE <- dpe_github
 }
