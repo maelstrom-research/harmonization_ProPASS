@@ -10,10 +10,10 @@ intro <- function(){
   message(
     "This script was prepared by Maelstrom Research.
     
-    It script will prepare your environment:
+    It will prepare your environment:
       - Creates structured folders for your harmonization
       - Downloads required files
-      - Opens a rproject where you will work
+      - Opens an Rproject where you will work
   
     Please contact us if you have any issues: twey@maelstrom-research.org")
   
