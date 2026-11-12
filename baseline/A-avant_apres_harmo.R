@@ -486,7 +486,7 @@ if(as.numeric( substr(packageVersion("Rmonize"), 1, 3) ) >= 2.0){
     dossier = NULL, 
     harmonized_dossier = NULL, 
     split_by = NULL,
-    summarize_output = TRUE,
+    summarize_output = FALSE,
     data_proc_elem = attributes(harmonized_dossier)$`Rmonize::Data Processing Elements`,
     dataschema = attributes(harmonized_dossier)$`Rmonize::DataSchema`,
     dataset = NULL,
@@ -1030,7 +1030,7 @@ Possible values for `split_by`:\n
         lapply(function(x) {
           
           if(summarize_output == TRUE){
-            n = 2
+            n = 5
             if(nrow(x) > 2*n){
               x1 = head(x,n)
               x2 = tail(x,n)

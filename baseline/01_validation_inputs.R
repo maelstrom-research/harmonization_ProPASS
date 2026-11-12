@@ -1,5 +1,5 @@
 #---- Load packages and basic inputs ----
-# v2.0
+# v2.2
 
 library(tools)
 library(fabR)
@@ -9,6 +9,11 @@ library(dplyr)
 library(tidyr)  
 library(stringr)
 library(haven)
+
+library(janitor)
+library(htmltools)
+library(purrr)
+library(crayon)
 
 # internal function to extract names of objects in dpe
 get_input_var_names <- function(data_proc_elem){
@@ -30,6 +35,7 @@ get_input_var_names <- function(data_proc_elem){
       pull("input_variables"))) %>% str_squish() %>% unique
 }
 
+#@ do we keep the eamil?
 # email contact if problems
 email_contact <- "twey@maelstrom-research.org"
 
@@ -112,20 +118,21 @@ if(file.exists("input_documents/dataschema_ProPASS.xlsx")){
           ")
     checks$dataschema_uptodate <- "Dataschema updated!"
   }
+  # Keep only most recent dataschema
+  dataschema <- dataschema_github
+  rm(list = c("dataschema_local","dataschema_github","test_all_equal"))
 }
 
-# If the first using the script
+# If the first time using the script (in this project)
 if(!file.exists("input_documents/dataschema_ProPASS.xlsx")){
   file.rename(from = "input_documents/dataschema_ProPASS_github.xlsx",
               to = "input_documents/dataschema_ProPASS.xlsx")
   
   checks$dataschema_uptodate <- "First download of the dataschema"
+  # Keep only most recent dataschema
+  dataschema <- dataschema_github
+  rm(list = c("dataschema_github"))
 }
-
-# Keep only most recent dataschema
-dataschema <- dataschema_github
-rm(list = c("dataschema_local","dataschema_github","test_all_equal"))
-
 
 
 #---- Get the data processing element ----
@@ -190,41 +197,6 @@ if(nrow(dpe_list) == 1){
                   checks$harmo_group, 
                   "-", format(checks$time_stamp, "%Y-%m-%d"), ".xlsx")
     ) 
-    #----------
-    #@Optional: 
-    #@Run harmo if harmo rules changed since last version
-    #----------
-    if(checks$dataschema_uptodate != "Dataschema updated!"){
-      specific <- menu(choices = c("All [default]", "Only variables changed in DPE"), 
-                       title = "
-                       What variables do you want to harmonize?")
-      if(specific == 2){
-        checks$harmo_type <- "subset"
-        var_changed <- setdiff(dpe_local %>% select(dataschema_variable, input_variables, contains("mlstr")),
-                               dpe_github %>% select(dataschema_variable, input_variables, contains("mlstr"))
-                               ) %>% 
-          pull(dataschema_variable)
-        #   ,
-        #   setdiff(dpe_github %>% select(dataschema_variable, contains("mlstr")),
-        #           dpe_local %>% select(dataschema_variable, contains("mlstr"))
-        #   ) %>% 
-        #     pull(dataschema_variable)
-        # ) %>% unique #@testing 
-        
-        dpe_github <- dpe_github %>% 
-          filter((trimws(`Mlstr_harmo::rule_category`) == "id_creation") |
-                   dataschema_variable %in% var_changed)
-        write_excel_allsheets(dpe_github,
-                              paste0("input_documents/data_processing_elements-",
-                                     checks$harmo_group, 
-                                     "-", format(checks$time_stamp, "%Y-%m-%d"), ".xlsx")
-        )
-        rm(var_changed)
-      }else{
-        checks$harmo_type <- "all"
-      }
-      rm(specific)
-    }
     
   }
   rm(dpe_local)
@@ -241,7 +213,6 @@ if(nrow(dpe_list) == 0){
                 checks$harmo_group, 
                 "-", format(checks$time_stamp, "%Y-%m-%d"), ".xlsx")
   )
-  checks$harmo_type <- "all"
 }
 
 # Keep only relevent DPE
@@ -250,6 +221,15 @@ rm(list = c("dpe_github", "dpe_list"))
 
 
 #---- Checks inputs ----
+
+# Remove extra columns
+DPE <- DPE %>% 
+  select(index, input_dataset, dataschema_variable, input_variables,
+         any_of(names(DPE)[grep("input_variables", names(DPE)):
+                             grep("Mlstr_harmo::comment", names(DPE))]),
+         starts_with("Mlstr_harmo::"), -any_of("internal_comment"))
+
+
 
 checks$input_documents_ok <- c(is_dataschema(dataschema), is_data_proc_elem(DPE))
 
@@ -321,30 +301,6 @@ data_clean <- data[,which(names(data) %in% DPE_variables)]
 
 message("-data loaded and cleaned-")
 
-
-if(checks$harmo_type == "all"){
-  # --------------------------------------------
-  # generate maelstrom datadictionary and summary
-  
-  data_dictionnary <- data_dict_extract(data_clean)
-  data_summary <- dataset_summarize(data_clean)
-  
-  message("-summary extracted-")
-  
-  # save the data dictionary in specified folder
-  write_excel_allsheets(
-    data_dictionnary,
-    paste0("output_documents/input data dictionaries/","extracted_data_dict_",input_dataset$name, ".xlsx"))
-  write_excel_allsheets(
-    data_summary,
-    paste0("output_documents/input data summaries/","data_summary_",input_dataset$name, ".xlsx"))
-  
-  message("-summary reports saved-")
-  
-}
-
-
-  
 # --------------------------------------------
 # checks presence of DPE_variables
 
@@ -356,17 +312,18 @@ if("DPE_vars_in_data" %in% names(checks)){
 DPE_vars_in_data[[input_dataset$name]] <- DPE_variables %in% names(data_clean)
 checks$DPE_vars_in_data <- DPE_vars_in_data 
   
-checks$DPE_vars_all_in <- !unlist(lapply(DPE_vars_in_data[c(input_dataset$name)], any))
+checks$DPE_vars_all_in <- ifelse(any(!DPE_vars_in_data[[input_dataset$name]]),
+                                 "ISSUE: variable(s) from DPE not in dataset",
+                                 "OK")
 
 
 #---- Save and clean ----
 
 saveRDS(checks, checks_path)
-saveRDS(dataschema, "output_documents/dataschema.rds")
-saveRDS(DPE, "output_documents/DPE.rds")
-# saveRDS(checks_path, "output_documents/checks_path.rds")
+# saveRDS(dataschema, "output_documents/dataschema.rds")
+# saveRDS(DPE, "output_documents/DPE.rds")
 
-rm(list = c("data_dictionnary", "data_summary", "DPE_vars_in_data",
-            "DPE_variables", "data", "input_dataset",
-            "dataschema_path","checks_list","time_stamp","DPE_list",
-            "get_input_var_names", "dpe_path"))
+rm(list = c("DPE_vars_in_data",
+            "DPE_variables", "data",
+            "get_input_var_names", "open_file"))
+
