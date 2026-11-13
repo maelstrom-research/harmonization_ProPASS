@@ -1,6 +1,6 @@
 
 #---- Prepare packages ----
-# v2.01 for ProPASS
+# v2.1 for ProPASS
 # install required packages
 # # checks libraries
 
@@ -37,9 +37,9 @@ intro <- function(){
   choice_list <-
     c(
       "AGN - Active aging - The AGNES study",
-      "AWH - Australian Longitudinal Study on Women's Health (ALSWH)",
+      #"AWH - Australian Longitudinal Study on Women's Health (ALSWH)",
       "BCS - 1970 British Birth Cohort Study",
-      "CHK - Chinese University of Hong Kong",
+      #"CHK - Chinese University of Hong Kong",
       "CHS - Copenhagen City Heart Study (Denmark)",
       #"DNH - Danish National Health Survey",
       #"DPC - Danish Physical Activity cohort with Objective measurements (DPhacto)",
@@ -125,9 +125,14 @@ download.file(
   destfile = paste0(folder_name, "/propass_crosscheck_battery_longitudinal.R"),
   mode = "wb")
 download.file(
-  url = "https://github.com/maelstrom-research/harmonization_ProPASS/raw/refs/heads/master/longitudinal/propass_crosscheck_helpers_longitudinal.RR",
+  url = "https://github.com/maelstrom-research/harmonization_ProPASS/raw/refs/heads/master/longitudinal/propass_crosscheck_helpers_longitudinal.R",
   destfile = paste0(folder_name, "/propass_crosscheck_helpers_longitudinal.R"),
   mode = "wb")
+download.file(
+  url = "https://github.com/maelstrom-research/harmonization_ProPASS/raw/refs/heads/master/longitudinal/A-avant_apres_harmo.R",
+  destfile = paste0(folder_name, "/A-avant_apres_harmo.R"),
+  mode = "wb")
+
 
 #---- Save and open project ----
 

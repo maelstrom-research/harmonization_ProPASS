@@ -1,5 +1,5 @@
 #---- Load packages ----
-# v2.01
+# v2.10
 library(fabR)
 library(madshapR)
 library(Rmonize)
@@ -9,6 +9,11 @@ library(tidyr)
 library(stringr)
 library(haven)
 library(tools)
+library(tidyverse)
+library(janitor)
+# library(htmltools)
+
+library(crayon)
 
 # email contact if problems
 email_contact <- "twey@maelstrom-research.org"
@@ -35,7 +40,6 @@ if(length(checks_list) == 1){
                            checks_list)
                       )
             )
-  #@$ REMOVE?
 }
 if(length(checks_list) == 0){
   checks <- readRDS("output_documents/checks_init.rds")
@@ -199,9 +203,6 @@ get_input_var_names <- function(data_proc_elem){
       separate_longer_delim(cols = "input_variables",";") %>%
       pull("input_variables"))) %>% str_squish() %>% unique
 }
-# Get the variables needed for harmonization
-DPE_variables <- get_input_var_names(DPE)
-rm(get_input_var_names)
 
 #---- checks input datasets ----
 # Get input datasets
@@ -269,49 +270,38 @@ for(ii in 1:nrow(input_datasets)){
     data <- read_dta(input_datasets$path[ii])
   }
   
+  # Get the variables needed for harmonization
+  DPE_variables <- get_input_var_names(DPE %>%
+                                         filter(input_dataset == input_datasets$dpe_dataset[ii]))
+  
   # create a new data frame without confidential variables
   data_clean <- data[,which(names(data) %in% DPE_variables)]
   
   message("-data loaded and cleaned-")
   
-  # --------------------------------------------
-  # generate maelstrom datadictionary and summary
-  
-  data_dictionnary <- data_dict_extract(data_clean)
-  data_summary <- dataset_summarize(data_clean)
-  
-  message("-summary extracted-")
-  
-  # save the data dictionary in specified folder
-  write_excel_allsheets(
-    data_dictionnary,
-    paste0("output_documents/input data dictionaries/","extracted_data_dict_",input_datasets$dpe_dataset[ii], ".xlsx"))
-  write_excel_allsheets(
-    data_summary,
-    paste0("output_documents/input data summaries/","data_summary_",input_datasets$dpe_dataset[ii], ".xlsx"))
-  
+
   # Add to dossier for harmonization later
   dossier_to_harmonize[[input_datasets$dpe_dataset[ii]]] <- data_clean
-  
-  
-  message("-summary reports saved-")
   
   # --------------------------------------------
   # checks presence of DPE_variables
   
-  if("DPE_vars_in_data" %in% names(checks)){
-    DPE_vars_in_data <- checks$DPE_vars_in_data
-  }else{
-    DPE_vars_in_data <- tibble("DPE_variables" = DPE_variables)
-    }
+  dpev <- tibble("DPE_variables" = DPE_variables)
+  dpev[[input_datasets$dpe_dataset[ii]]] <- DPE_variables %in% names(data_clean)
   
-  DPE_vars_in_data[[input_datasets$dpe_dataset[ii]]] <- DPE_variables %in% names(data_clean)
-  checks$DPE_vars_in_data <- DPE_vars_in_data
+  if(exists("DPE_vars_in_data")){
+    DPE_vars_in_data <- full_join(DPE_vars_in_data, dpev)
+  }else{
+    DPE_vars_in_data <- dpev
+  }
   
 }
-
-checks$DPE_vars_all_in <- !unlist(lapply(DPE_vars_in_data[c(input_datasets$dpe_dataset)], any))
-
+checks$DPE_vars_in_data <- DPE_vars_in_data
+checks$DPE_vars_all_in <- ifelse(any(unlist(!DPE_vars_in_data[c(input_datasets$dpe_dataset)])),
+                                 "ISSUE: variable(s) from DPE not in dataset(s)",
+                                 "OK")
+rm(get_input_var_names)
+rm(dpev)
 #---- Final check ----
 # Change in packages since last run
 packages <- as_tibble(installed.packages()) %>%
