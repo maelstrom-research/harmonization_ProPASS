@@ -37,14 +37,14 @@ intro <- function(){
   choice_list <-
     c(
       "AGN - Active aging - The AGNES study",
-      #"AWH - Australian Longitudinal Study on Women's Health (ALSWH)",
+      "AWH - Australian Longitudinal Study on Women's Health (ALSWH)",
       "BCS - 1970 British Birth Cohort Study",
-      #"CHK - Chinese University of Hong Kong",
+      "CHK - Chinese University of Hong Kong",
       "CHS - Copenhagen City Heart Study (Denmark)",
       #"DNH - Danish National Health Survey",
       #"DPC - Danish Physical Activity cohort with Objective measurements (DPhacto)",
       #"DSE - Danish Observational Study of Eldercare work and MSK disorders (DOSES) (Denmark)",
-      #"ERC - Study on Nutrition and Cardiovascular Risk (Spain)",
+      "ERC - Study on Nutrition and Cardiovascular Risk (Spain)",
       "FRA - Finish Retirement and Aging Study (FIREA)",
       #"H16 - Health 2016",
       #"HBS - Healthy Brain Study",
