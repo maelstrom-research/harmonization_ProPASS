@@ -20,8 +20,6 @@ intro <- function(){
   choice_list <-
     c(
       "AGN - Active aging - The AGNES study",
-      "AWH - Australian Longitudinal Study on Women's Health (ALSWH)",
-      "BCS - 1970 British Birth Cohort Study",
       "CHK - Chinese University of Hong Kong",
       "CHS - Copenhagen City Heart Study (Denmark)",
       "DNH - Danish National Health Survey",
@@ -33,23 +31,20 @@ intro <- function(){
       "HBS - Healthy Brain Study",
       "KSA - King Faisal University Saudi Arabia",
       "LOF - Lolland-Falster Study (LOFUS) (Denmark)",
-      "MSC - The Middle-age Soweto Cohort",
       "MSN - The Maastricht Study (The Netherlands)",
       "NES - Nijmegen Exercise Study/ Healthy Brain",
       "NHS - The Trøndelag Health Study (HUNT 4) (Norway)",
-      "SHR - Survey of health, aging and Retirement in Europe",
       "SHS - Singapore Population Health Studies (Singapore)",
+      
       #"ACHIEVE - Aging and Cognitive Health Evaluation in Elders",
       #"ARIC - Atherosclerosis Risk in Communities",
       #"BLSA - Baltimore Longitudinal Study of Aging",
       "NHANES11 - National Health and Nutrition Examination Survey 2011",
       "NHANES13 - National Health and Nutrition Examination Survey 2013",
       #"NHATS - National Health and Aging Trends Study",
-      "RAINE - The Raine Study",
-      "STURDY - Study To Understand Fall Reduction and Vitamin D in You",
+      #"STURDY - Study To Understand Fall Reduction and Vitamin D in You",
       "TsuruLong - Tsuru Longitudinal Study",
-      "TsuruHC - Tsuru Health Checkup",
-      "WII - Whitehall II"
+      "TsuruHC - Tsuru Health Checkup"
     )
   
   harmo_group <- 
