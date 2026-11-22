@@ -1,6 +1,6 @@
 
 #---- Prepare packages and checks----
-# v2.0 for ProPASS
+# v2.1 for ProPASS
 # install required packages
 
 
@@ -18,7 +18,8 @@ intro <- function(){
     Please contact us if you have any issues: twey@maelstrom-research.org")
   
   choice_list <-
-    c("AGN - Active aging - The AGNES study",
+    c(
+      "AGN - Active aging - The AGNES study",
       "AWH - Australian Longitudinal Study on Women's Health (ALSWH)",
       "BCS - 1970 British Birth Cohort Study",
       "CHK - Chinese University of Hong Kong",
@@ -38,18 +39,18 @@ intro <- function(){
       "NHS - The Trøndelag Health Study (HUNT 4) (Norway)",
       "SHR - Survey of health, aging and Retirement in Europe",
       "SHS - Singapore Population Health Studies (Singapore)",
-      "ACHIEVE - ",
-      "ARIC - ",
-      "BLSA - ",
-      "CLSA - ",
-      "MacM3 - ",
+      #"ACHIEVE - Aging and Cognitive Health Evaluation in Elders",
+      #"ARIC - Atherosclerosis Risk in Communities",
+      #"BLSA - Baltimore Longitudinal Study of Aging",
       "NHANES11 - National Health and Nutrition Examination Survey 2011",
       "NHANES13 - National Health and Nutrition Examination Survey 2013",
-      "NHATS - ",
+      #"NHATS - National Health and Aging Trends Study",
       "RAINE - The Raine Study",
-      "STURDY - ",
-      "Tsuru - ",
-      "Wll - Whitehall study")
+      "STURDY - Study To Understand Fall Reduction and Vitamin D in You",
+      "TsuruLong - Tsuru Longitudinal Study",
+      "TsuruHC - Tsuru Health Checkup",
+      "WII - Whitehall II"
+    )
   
   harmo_group <- 
     menu(choices = choice_list,
