@@ -1,6 +1,6 @@
 
 #---- Prepare packages and checks----
-# v2.0 for ProPASS
+# v2.1 for ProPASS
 # install required packages
 
 
@@ -38,21 +38,23 @@ intro <- function(){
       "NHS - The Trøndelag Health Study (HUNT 4) (Norway)",
       "SHR - Survey of health, aging and Retirement in Europe",
       "SHS - Singapore Population Health Studies (Singapore)",
+      
       "ACHIEVE - Aging and Cognitive Health Evaluation in Elders",
       "ARIC - Atherosclerosis Risk in Communities",
       "BLSA - Baltimore Longitudinal Study of Aging ",
-      "CLSA Comprehensive - Canadian Longitudinal Study on Aging Comprehensive",
-      "CLSA Tracking - Canadian Longitudinal Study on Aging Tracking",
+      "CLSA Comprehensive - Canadian Longitudinal Study on Aging",
+      "LISS - LISS panel",
       "MacM3 - McMaster Monitoring My Mobility",
       "NHANES11 - National Health and Nutrition Examination Survey 2011",
       "NHANES13 - National Health and Nutrition Examination Survey 2013",
       "NHATS - National Health and Aging Trends Study",
       "RAINE - The Raine Study",
-      "STURDY - Study To Understand Fall Reduction and Vitamin D in You ",
+      "SNAC-K - Swedish National Study of Aging and Care in Kungsholmen",
+      "STURDY - Study To Understand Fall Reduction and Vitamin D in You",
       "Tsuru Longitudinal- Tsuru Longitudinal Study",
       "Tsuru Checkup- Tsuru Health Checkup",
-      "Wll - Whitehall study",
-      "LISS - LISS panel")
+      "WII - Whitehall II"
+     )
   
   harmo_group <- 
     menu(choices = choice_list,
