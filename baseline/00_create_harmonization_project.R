@@ -41,7 +41,7 @@ intro <- function(){
       
       "ACHIEVE - Aging and Cognitive Health Evaluation in Elders",
       "ARIC - Atherosclerosis Risk in Communities",
-      "BLSA - Baltimore Longitudinal Study of Aging ",
+      "BLSA - Baltimore Longitudinal Study of Aging",
       "CLSA Comprehensive - Canadian Longitudinal Study on Aging",
       "LISS - LISS panel",
       "MacM3 - McMaster Monitoring My Mobility",
@@ -51,8 +51,8 @@ intro <- function(){
       "RAINE - The Raine Study",
       "SNAC-K - Swedish National Study of Aging and Care in Kungsholmen",
       "STURDY - Study To Understand Fall Reduction and Vitamin D in You",
-      "Tsuru Longitudinal- Tsuru Longitudinal Study",
-      "Tsuru Checkup- Tsuru Health Checkup",
+      "TsuruLong - Tsuru Longitudinal Study",
+      "TsuruHC- Tsuru Health Checkup",
       "WII - Whitehall II"
      )
   
