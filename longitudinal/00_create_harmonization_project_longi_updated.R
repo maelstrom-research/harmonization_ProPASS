@@ -66,7 +66,7 @@ intro <- function(){
        "RAINE - The Raine Study",
        "STURDY - Study To Understand Fall Reduction and Vitamin D in You",
        "SNAC-K - Swedish National Study of Aging and Care in Kungsholmen",
-       "Tsuru Longitudinal- Tsuru Longitudinal Study",
+       "TsuruLong - Tsuru Longitudinal Study",
        "WII - Whitehall II"
       )
   
