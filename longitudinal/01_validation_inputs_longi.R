@@ -315,6 +315,7 @@ rm(packages)
 #---- Save and clean ----
 saveRDS(checks, paste0("output_documents/checks-", checks$harmo_group, ".rds"))
 
-rm(list = c("data_dictionnary", "data_summary", "ii", "DPE_vars_in_data", 
+rm(list = c("ii", "DPE_vars_in_data", 
             "data_clean", "DPE_variables", "data", "input_datasets",
             "choice_file", "open_file"))
+
