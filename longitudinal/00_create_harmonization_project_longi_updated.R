@@ -54,7 +54,7 @@ intro <- function(){
       "MSN - The Maastricht Study (The Netherlands)",
       "NES - Nijmegen Exercise Study/ Healthy Brain",
       "NHS - The Trøndelag Health Study (HUNT 4) (Norway)",
-      "SHR - Survey of health, aging and Retirement in Europe"
+      "SHR - Survey of health, aging and Retirement in Europe",
       #"SHS - Singapore Population Health Studies (Singapore)",
        
        "ARIC - Atherosclerosis Risk in Communities",
