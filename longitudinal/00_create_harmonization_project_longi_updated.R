@@ -1,6 +1,6 @@
 
 #---- Prepare packages ----
-# v2.2 for ProPASS
+# v2.2.1 for ProPASS
 # install required packages
 # # checks libraries
 
@@ -74,7 +74,7 @@ intro <- function(){
     menu(choices = choice_list,
          title = "What cohort do you want to harmonize?")
   
-  harmo_group <- substr(choice_list,1,3)[harmo_group]
+  harmo_group <- strsplit(choice_list[harmo_group], split = " - ")[[1]][1]
   
   message(paste0("We will now create the environment for ", harmo_group,"."))
   
@@ -154,4 +154,5 @@ rm(list = c("current_dir", "intro", "harmo_group", "checks"))
 
 # The last line will open a new project, and ask you if you want to save (you don't need to)
 rstudioapi::openProject(path = folder_name)
+
 
