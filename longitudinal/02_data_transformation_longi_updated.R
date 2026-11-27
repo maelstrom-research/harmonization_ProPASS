@@ -1,5 +1,5 @@
 #---- Load inputs ----
-# v1.0
+# v1.1
 source("A-avant_apres_harmo.R")
 
 #---- Transformation of data ----
@@ -66,8 +66,34 @@ send the file '",paste0("output_documents/checks-", checks$harmo_group, ".rds"),
 
 if(!any(checks$harmonization_errors)){
   
-  #@CHECK per dataset?
-  # before after report
+  #----Inputs
+  # get inputs data dicts
+  input_data_dicts <- lapply(dossier_to_harmonize, data_dict_extract)
+  
+  for(ii in names(input_data_dicts)){
+    dd <- input_data_dicts[[ii]]
+    
+    write_excel_allsheets(
+      dd,
+      paste0("output_documents/input data dictionaries/extracted_data_dict_", ii,'.xlsx'))
+  }
+  
+  # get input summary
+  input_summary <- dossier_summarize(dossier_to_harmonize)
+  
+  for(ii in names(input_summary)){
+    ss <- input_summary[[ii]]
+    
+    write_excel_allsheets(
+      ss,
+      paste0("output_documents/input data summaries/","data_summary_", ii,'.xlsx'))
+  }
+
+  # Clean
+  rm(list = c("input_summary", "input_data_dicts", "ss"))
+  
+  
+  #----before after report
   before_after_report <- 
     avant_apres_harmo(dossier = dossier_to_harmonize,
                       harmonized_dossier = harmonized_dossier,
@@ -79,6 +105,7 @@ if(!any(checks$harmonization_errors)){
     paste0("output_documents/","before_after_report_longitudinal-",
            checks$harmo_group,'.xlsx'))
   
+  #----Harmonized outputs 
   # harmonization summary report
   output_summary <- 
     harmonized_dossier_summarize(harmonized_dossier)
@@ -129,14 +156,48 @@ if(!any(checks$harmonization_errors)){
     paste0("output_documents/harmonization_summary_longitudinal-",
            checks$harmo_group,'.xlsx'))
   
+  # Save inputs info
+  rruns <- "if needed"
+  if(dir.exists("output_documents/input data summaries/")){
+    rruns <-  menu(choices = c("Yes", "No, the input dataset didn't change"),
+                   title = "Do you want to get new summaries of input dataset(s)?")
+  }
+  
+  if( rruns == 1 ){
+    # get inputs data dicts
+    input_data_dicts <- lapply(dossier_to_harmonize, data_dict_extract)
+    
+    for(ii in names(input_data_dicts)){
+      dd <- input_data_dicts[[ii]]
+      
+      write_excel_allsheets(
+        dd,
+        paste0("output_documents/input data dictionaries/extracted_data_dict_", ii,'.xlsx'))
+    }
+    
+    # get input summary
+    input_summary <- dossier_summarize(dossier_to_harmonize)
+    
+    for(ii in names(input_summary)){
+      ss <- input_summary[[ii]]
+      
+      write_excel_allsheets(
+        ss,
+        paste0("output_documents/input data summaries/","data_summary_", ii,'.xlsx'))
+    }
+    
+    # Clean
+    rm(list = c("input_summary", "input_data_dicts", "ss"))
+  }
+  
 }
 
 #---- clean objects ----
 
 
-#@CLEAN the cleaning
 rm(list = c(
   "ii","dd","time_stamp",
   "harmo_errors","harmo_warnings","avant_apres_harmo",
-  "email_contact"))
+  "email_contact", 
+  "rruns"))
 
